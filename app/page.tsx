@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import {
@@ -156,10 +156,23 @@ export default function MeikifyWebsite() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [visibleSections, setVisibleSections] = useState(new Set())
   const [visibleMethodologyCards, setVisibleMethodologyCards] = useState(new Set())
+  const videoRef = useRef<HTMLVideoElement | null>(null)
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY })
+    }
+    const video = videoRef.current
+    const handleEnded = () => {
+      setTimeout(() => {
+        if (video) {
+          video.currentTime = 0
+          video.play()
+        }
+      }, 5000) // espera 5 segundos después de terminar
+    }
+    if (video) {
+      video.addEventListener("ended", handleEnded)
     }
     window.addEventListener("mousemove", handleMouseMove)
     return () => window.removeEventListener("mousemove", handleMouseMove)
@@ -392,10 +405,6 @@ export default function MeikifyWebsite() {
 
           {/* Right Visual */}
           <div 
-            className={`relative
-            rounded-2xl
-            shadow-2xl
-            bg-[url('/images/fondo_2.jpg')]`}
             id="content-robot" style={{
               height: "92%",
             }}>
@@ -423,16 +432,20 @@ export default function MeikifyWebsite() {
 
               {/* Robot GIF */}
               <div className="relative z-10">
-                <img
-                  src="/images/robot-1-unscreen.gif"
-                  alt="Meikify AI Robot Animation"
-                  className="w-full max-w-sm h-auto object-contain drop-shadow-2xl align-left"
-                  style={{
-                      backgroundColor: "transparent",
-                      width: "100%",
-                      height: "500px",
-                  }}
-                />
+                <video
+                ref={videoRef}
+                src="/videos/video_home.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-[500px] rounded-2xl shadow-2xl shadow-cyan-500/50"
+                style={{
+    backgroundColor: "transparent",
+    width: "100%",
+    height: "500px",
+  }}
+/>
               </div>
             </div>
           </div>
@@ -908,52 +921,194 @@ export default function MeikifyWebsite() {
       {/* Futuristic CTA */}
       <section
         id="contacto"
-        className="py-24 bg-gradient-to-r from-slate-900 via-blue-900 to-cyan-900 text-white relative overflow-hidden"
+        className="py-24 bg-gradient-to-r from-slate-900 via-blue-900 to-cyan-900 text-white relative overflow-hidden overflow-visible"
       >
-        <div className="absolute inset-0 bg-[url('/images/robot2.png')] bg-no-repeat bg-top bg-cover opacity-65">
-          
+        {/* Robot centrado, con manos sobresaliendo del fondo */}
+        <div className="absolute bottom-[-62px] left-1/2 transform -translate-x-1/2 z-10 pointer-events-none">
+          <img
+            src="/images/robot_pose_mano.png"
+            alt="Robot Meikify"
+            className="w-[800px] md:w-[900px] lg:w-[1000px] xl:w-[1100px]"
+          />
         </div>
 
-        <div className="container mx-auto px-6 text-center relative z-10">
+        <div className="container mx-auto px-6 text-center relative z-20">
           <div
-            className={`max-w-4xl mx-auto space-y-8 ${visibleSections.has("contacto") ? "animate-fade-in-scale" : ""}`}
+            className={`mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-12 ${
+              visibleSections.has("contacto") ? "animate-fade-in-scale" : ""
+            }`}
           >
-            <h2 className="text-6xl font-black leading-tight">
-              ¿Listo para el{" "}
-              <span className="text-transparent bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text">
-                salto cuántico
-              </span>
-              ?
-            </h2>
-            <p className="text-2xl text-blue-100 leading-relaxed">
-              Tu competencia ya está automatizando. No te quedes atrás en la revolución de la IA.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center pt-8">
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-black px-12 py-6 text-xl font-bold rounded-full shadow-2xl hover:shadow-yellow-500/25 transition-all duration-300 transform hover:scale-110"
-              >
-                <MessageSquare className="mr-3" size={24} />
-                WhatsApp Inmediato
-              </Button>              
+            {/* Texto alineado a la izquierda */}
+            <div className="flex-1 text-left">
+              <h2 className="text-6xl w-3/4 font-black leading-tight text-left">
+                ¿Listo para el{" "}
+                <span className="text-transparent bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text">
+                  salto cuántico
+                </span>
+                ?
+              </h2>
+              <p className="text-2xl text-blue-100 leading-relaxed mt-6 text-left w-3/4">
+                Tu competencia ya está automatizando. No te quedes atrás en la revolución de la IA.
+              </p>
             </div>
-
-            <div className="pt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-              {[
-                { icon: <Star className="w-8 h-8" />, text: "Diagnóstico gratuito en 24h" },
-                { icon: <Shield className="w-8 h-8" />, text: "Garantía de resultados" },
-                { icon: <Users className="w-8 h-8" />, text: "Soporte 24/7 especializado" },
-              ].map((feature, index) => (
-                <div key={index} className="flex items-center justify-center space-x-3 text-cyan-300">
-                  {feature.icon}
-                  <span className="font-medium">{feature.text}</span>
-                </div>
-              ))}
+            {/* Features alineados a la derecha */}
+            <div className="flex-1 pt-12 md:pt-0 md:pl-12">
+              <div className="grid grid-cols-1 md:grid-cols-1 gap-8 justify-items-end">
+                <h3 className="text-3xl font-bold text-cyan-300">Comienza tu transformación</h3>
+                  <div className="space-y-4">
+                    {[
+                      { icon: <Star className="w-6 h-6" />, text: "Diagnóstico gratuito en 24h" },
+                      { icon: <Shield className="w-6 h-6" />, text: "Garantía de resultados" },
+                      { icon: <Users className="w-6 h-6" />, text: "Soporte 24/7 especializado" },
+                    ].map((feature, index) => (
+                      <div key={index} className="flex items-center space-x-4 text-cyan-300">
+                        {feature.icon}
+                        <span className="font-medium text-lg">{feature.text}</span>
+                      </div>
+                    ))}
+                  </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
+      {/* Contact Form Section */}
+      <section className="py-24 bg-gradient-to-br from-slate-800 via-slate-900 to-blue-900 text-white">
+        <div className="container mx-auto px-6">
+          <div className="max-w-2xl mx-auto">
+            {/* Header */}
+            <div className="text-center mb-12">
+              <h2 className="text-4xl lg:text-5xl font-bold mb-6 leading-tight">
+                Genera tu diagnóstico inteligente en menos de{" "}
+                <span className="text-transparent bg-gradient-to-r from-cyan-400 to-yellow-400 bg-clip-text">
+                  2 minutos
+                </span>
+              </h2>
+              <div className="space-y-2 text-lg text-slate-300">
+                <p>Descubre cómo automatizar tareas, ahorrar tiempo y aumentar tus ventas con IA.</p>
+                <p>Recibirás un informe personalizado con análisis y recomendaciones en tu correo o WhatsApp.</p>
+              </div>
+            </div>
+
+            {/* Form */}
+            <div className="bg-white rounded-3xl p-8 lg:p-12 shadow-2xl">
+              <form className="space-y-6">
+                {/* Name Field */}
+                <div>
+                  <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-2">
+                    Nombre y Apellido
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    placeholder="Juan Perez"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-slate-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300"
+                    required
+                  />
+                </div>
+
+                {/* Email Field */}
+                <div>
+                  <label htmlFor="email" className="block text-sm font-semibold text-slate-700 mb-2">
+                    Correo electrónico
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="ejemplo@empresa.com"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-slate-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300"
+                    required
+                  />
+                </div>
+
+                {/* WhatsApp Field */}
+                <div>
+                  <label htmlFor="whatsapp" className="block text-sm font-semibold text-slate-700 mb-2">
+                    WhatsApp (con código país)
+                  </label>
+                  <input
+                    type="tel"
+                    id="whatsapp"
+                    name="whatsapp"
+                    placeholder="+56912345678"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-slate-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300"
+                    required
+                  />
+                </div>
+
+                {/* Company Field */}
+                <div>
+                  <label htmlFor="company" className="block text-sm font-semibold text-slate-700 mb-2">
+                    Empresa
+                  </label>
+                  <input
+                    type="text"
+                    id="company"
+                    name="company"
+                    placeholder="ACME Ltda."
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-slate-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300"
+                    required
+                  />
+                </div>
+
+                {/* Position Field */}
+                <div>
+                  <label htmlFor="position" className="block text-sm font-semibold text-slate-700 mb-2">
+                    Cargo
+                  </label>
+                  <input
+                    type="text"
+                    id="position"
+                    name="position"
+                    placeholder="Gerente de Operaciones"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-slate-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300"
+                    required
+                  />
+                </div>
+
+                {/* Process Field */}
+                <div>
+                  <label htmlFor="process" className="block text-sm font-semibold text-slate-700 mb-2">
+                    ¿Qué tarea o proceso te gustaría automatizar?
+                  </label>
+                  <textarea
+                    id="process"
+                    name="process"
+                    rows={4}
+                    placeholder="Ej: 'Responder mensajes de WhatsApp, Emitir facturas'"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-slate-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300 resize-none"
+                    required
+                  />
+                </div>
+
+                {/* Submit Button */}
+                <div className="pt-4">
+                  <Button
+                    type="submit"
+                    size="lg"
+                    className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-8 py-4 text-lg font-bold rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02]"
+                  >
+                    <Sparkles className="mr-3" size={20} />
+                    Generar diagnóstico con IA
+                  </Button>
+                </div>
+
+                {/* Privacy Notice */}
+                <div className="flex items-start space-x-3 pt-4 text-sm text-slate-600">
+                  <Shield className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
+                  <p className="leading-relaxed">
+                    <strong>No compartimos tus datos con nadie.</strong> Solo los usamos para generar tu propuesta
+                    personalizada.
+                  </p>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
 
       {/* Modern Footer */}
       <footer className="bg-white py-16 border-t border-gray-100">
