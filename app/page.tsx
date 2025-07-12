@@ -519,7 +519,7 @@ export default function MeikifyWebsite() {
                     >
                       {benefit.icon}
                     </div>
-                    <h3 className="text-xl font-bold mb-3">{benefit.title}</h3>
+                    <h3 className="text-xl font-bold mb-3 text-slate-300">{benefit.title}</h3>
                     <p className="text-slate-300 mb-4 leading-relaxed text-sm">{benefit.description}</p>
                     <div
                       className={`text-lg font-bold bg-gradient-to-br ${benefit.color} bg-clip-text text-transparent`}
@@ -555,22 +555,7 @@ export default function MeikifyWebsite() {
             </div>
           </div>
 
-          {/* Estadísticas adicionales */}
-          <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            {[
-              { number: "500+", label: "Procesos automatizados" },
-              { number: "99.9%", label: "Tiempo de actividad" },
-              { number: "24/7", label: "Monitoreo continuo" },
-              { number: "∞", label: "Escalabilidad" },
-            ].map((stat, index) => (
-              <div key={index} className="space-y-2">
-                <div className="text-3xl font-bold text-transparent bg-gradient-to-r from-cyan-400 to-yellow-400 bg-clip-text">
-                  {stat.number}
-                </div>
-                <div className="text-sm text-slate-400">{stat.label}</div>
-              </div>
-            ))}
-          </div>
+          
         </div>
       </section>
 
@@ -924,7 +909,7 @@ export default function MeikifyWebsite() {
         className="py-24 bg-gradient-to-r from-slate-900 via-blue-900 to-cyan-900 text-white relative overflow-hidden overflow-visible"
       >
         {/* Robot centrado, con manos sobresaliendo del fondo */}
-        <div className="absolute bottom-[-62px] left-1/2 transform -translate-x-1/2 z-10 pointer-events-none">
+        <div className="absolute bottom-[-65px] left-1/2 transform -translate-x-1/2 z-10 pointer-events-none">
           <img
             src="/images/robot_pose_mano.png"
             alt="Robot Meikify"
