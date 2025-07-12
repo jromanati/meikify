@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
+import type React from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import {
@@ -157,6 +158,7 @@ export default function MeikifyWebsite() {
   const [visibleSections, setVisibleSections] = useState(new Set())
   const [visibleMethodologyCards, setVisibleMethodologyCards] = useState(new Set())
   const videoRef = useRef<HTMLVideoElement | null>(null)
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -230,6 +232,55 @@ export default function MeikifyWebsite() {
       methodologyObserver.disconnect()
     }
   }, [])
+
+  // Load reCAPTCHA script
+  useEffect(() => {
+    const script = document.createElement("script")
+    script.src = "https://www.google.com/recaptcha/api.js"
+    script.async = true
+    script.defer = true
+    document.head.appendChild(script)
+
+    // Cleanup function
+    return () => {
+      const existingScript = document.querySelector('script[src="https://www.google.com/recaptcha/api.js"]')
+      if (existingScript) {
+        document.head.removeChild(existingScript)
+      }
+    }
+  }, [])
+
+  // Listen for reCAPTCHA events
+  useEffect(() => {
+    const handleRecaptchaChange = (event: CustomEvent) => {
+      setRecaptchaToken(event.detail)
+    }
+
+    window.addEventListener("recaptcha-change", handleRecaptchaChange as EventListener)
+
+    return () => {
+      window.removeEventListener("recaptcha-change", handleRecaptchaChange as EventListener)
+    }
+  }, [])
+
+  // reCAPTCHA callback function
+  const onRecaptchaChange = (token: string | null) => {
+    setRecaptchaToken(token)
+  }
+
+  // Form submission handler
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!recaptchaToken) {
+      alert("Por favor, completa la verificación reCAPTCHA")
+      return
+    }
+
+    // Here you would normally send the form data to your backend
+    console.log("Form submitted with reCAPTCHA token:", recaptchaToken)
+    alert("Formulario enviado correctamente!")
+  }
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden pt-28">
@@ -433,19 +484,19 @@ export default function MeikifyWebsite() {
               {/* Robot GIF */}
               <div className="relative z-10">
                 <video
-                ref={videoRef}
-                src="/videos/video_home.mp4"
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="w-full h-[500px] rounded-2xl shadow-2xl shadow-cyan-500/50"
-                style={{
-    backgroundColor: "transparent",
-    width: "100%",
-    height: "500px",
-  }}
-/>
+                  ref={videoRef}
+                  src="/videos/video_home.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-[500px] rounded-2xl shadow-2xl shadow-cyan-500/50"
+                  style={{
+                      backgroundColor: "transparent",
+                      width: "100%",
+                      height: "500px",
+                    }}
+                />
               </div>
             </div>
           </div>
@@ -844,7 +895,7 @@ export default function MeikifyWebsite() {
         </div>
       </section>
 
-      {/* Casos de Éxito */}
+      {/* Casos de Éxito
       <section id="casos" className="py-24 bg-gray-50">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
@@ -899,6 +950,141 @@ export default function MeikifyWebsite() {
                 </CardContent>
               </Card>
             ))}
+          </div>
+        </div>
+      </section>
+      */}
+      {/* Before & After Automation Section */}
+      <section
+        id="antes-despues"
+        className="py-24 bg-gradient-to-br from-gray-50 via-white to-slate-50 relative overflow-hidden"
+      >
+        {/* Background decorative elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-br from-red-200/30 to-orange-200/30 rounded-full blur-2xl"></div>
+          <div className="absolute bottom-20 right-10 w-40 h-40 bg-gradient-to-br from-green-200/30 to-emerald-200/30 rounded-full blur-2xl"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-br from-cyan-100/20 to-blue-100/20 rounded-full blur-3xl"></div>
+        </div>
+
+        <div className="container mx-auto px-6 relative z-10">
+          {/* Header */}
+          <div className="text-center mb-20">
+            <h2 className="text-5xl lg:text-6xl font-bold text-slate-900 mb-6 leading-tight">
+              Automatizar con IA:{" "}
+              <span className="text-transparent bg-gradient-to-r from-red-500 via-orange-500 to-blue-500 bg-clip-text">
+                un antes y un después
+              </span>
+            </h2>
+            <p className="text-xl text-slate-600 max-w-4xl mx-auto leading-relaxed">
+              La automatización no solo ahorra horas: elimina errores, mejora la experiencia de tu equipo y libera
+              recursos para proyectos estratégicos.
+            </p>
+          </div>
+
+          {/* Before & After Comparison */}
+          <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
+            {/* ANTES - Before Column */}
+            <div className={`${visibleSections.has("antes-despues") ? "animate-fade-in-left" : ""}`}>
+              <div className="bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl p-8 lg:p-10 shadow-xl border border-gray-200 relative overflow-hidden">
+                {/* Decorative elements */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-red-200/20 to-orange-200/20 rounded-full blur-xl transform translate-x-16 -translate-y-16"></div>
+
+                <div className="relative z-10">
+                  <div className="flex items-center mb-8">
+                    <div className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-6 py-3 rounded-2xl font-bold text-xl shadow-lg">
+                      Antes
+                    </div>
+                  </div>
+
+                  <div className="space-y-6">
+                    {[
+                      {
+                        icon: "📅",
+                        text: "Más de 8 horas semanales",
+                        subtext: "dedicadas a tareas repetitivas",
+                      },
+                      {
+                        icon: "🧠",
+                        text: "Tu equipo consumido resolviendo imprevistos",
+                        subtext: "en lugar de innovar",
+                      },
+                      {
+                        icon: "🐢",
+                        text: "Procesos manuales lentos",
+                        subtext: "y propensos a errores",
+                      },
+                      {
+                        icon: "🔌",
+                        text: "Sistemas aislados",
+                        subtext: "sin seguimiento claro",
+                      },
+                    ].map((item, index) => (
+                      <div key={index} className="flex items-start space-x-4 group">
+                        <div className="text-3xl group-hover:scale-110 transition-transform duration-300">
+                          {item.icon}
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-slate-800 font-semibold text-lg leading-tight">{item.text}</p>
+                          <p className="text-slate-600 mt-1">{item.subtext}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* DESPUÉS - After Column */}
+            <div className={`${visibleSections.has("antes-despues") ? "animate-fade-in-right" : ""}`}>
+              <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-3xl p-8 lg:p-10 shadow-xl border-2 border-green-200 relative overflow-hidden">
+                {/* Decorative elements */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-200/30 to-emerald-200/30 rounded-full blur-xl transform translate-x-16 -translate-y-16"></div>
+                <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-br from-cyan-200/20 to-blue-200/20 rounded-full blur-lg transform -translate-x-12 translate-y-12"></div>
+
+                <div className="relative z-10">
+                  <div className="flex items-center mb-8">
+                    <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-6 py-3 rounded-2xl font-bold text-xl shadow-lg">
+                      Después
+                    </div>
+                  </div>
+
+                  <div className="space-y-6">
+                    {[
+                      {
+                        icon: "⚡",
+                        text: "Reducción de hasta 70%",
+                        subtext: "del tiempo operativo",
+                      },
+                      {
+                        icon: "📈",
+                        text: "Procesos medibles, escalables",
+                        subtext: "y predecibles",
+                      },
+                      {
+                        icon: "🤖",
+                        text: "Flujos automáticos con IA",
+                        subtext: "y bots 24/7",
+                      },
+                      {
+                        icon: "🍀",
+                        text: "Integración completa entre equipos,",
+                        subtext: "procesos y sistemas",
+                      },
+                    ].map((item, index) => (
+                      <div key={index} className="flex items-start space-x-4 group">
+                        <div className="text-3xl group-hover:scale-110 transition-transform duration-300">
+                          {item.icon}
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-slate-800 font-semibold text-lg leading-tight">{item.text}</p>
+                          <p className="text-slate-600 mt-1">{item.subtext}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -977,7 +1163,7 @@ export default function MeikifyWebsite() {
 
             {/* Form */}
             <div className="bg-white rounded-3xl p-8 lg:p-12 shadow-2xl">
-              <form className="space-y-6">
+              <form className="space-y-6" onSubmit={handleFormSubmit}>
                 {/* Name Field */}
                 <div>
                   <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-2">
@@ -1068,12 +1254,26 @@ export default function MeikifyWebsite() {
                   />
                 </div>
 
+                {/* reCAPTCHA - Add this before the Submit Button */}
+                <div className="flex justify-center">
+                  <div
+                    className="g-recaptcha"
+                    data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+                    data-callback="onRecaptchaChange"
+                  ></div>
+                </div>
+
                 {/* Submit Button */}
                 <div className="pt-4">
-                  <Button
+                   <Button
                     type="submit"
                     size="lg"
-                    className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-8 py-4 text-lg font-bold rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02]"
+                    disabled={!recaptchaToken}
+                    className={`w-full px-8 py-4 text-lg font-bold rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] ${
+                      !recaptchaToken
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
+                    } text-white`}
                   >
                     <Sparkles className="mr-3" size={20} />
                     Generar diagnóstico con IA
@@ -1096,100 +1296,159 @@ export default function MeikifyWebsite() {
 
 
       {/* Modern Footer */}
-      <footer className="bg-white py-16 border-t border-gray-100">
+      <footer className="bg-slate-900 py-16 text-white">
         <div className="container mx-auto px-6">
-          <div className="grid lg:grid-cols-4 gap-12">
-            <div className="lg:col-span-2">
-              <div className="flex items-center space-x-3 mb-6">
-                <img src="/images/meikify-logo.webp" alt="Meikify Logo" className="w-auto object-contain" />
+          <div className="grid lg:grid-cols-3 gap-12 items-start">
+            {/* Logo and Tagline */}
+            <div className="space-y-4">
+              <div className="flex items-center space-x-3">
+                <img src="/images/meikify-logo.webp" alt="Meikify Logo" className="h-10 w-auto object-contain" />
               </div>
-              <p className="text-slate-600 leading-relaxed max-w-md mb-6">
-                Pioneros en automatización inteligente. Transformamos negocios con IA de vanguardia que libera el
-                potencial humano.
+              <p className="text-slate-300 leading-relaxed max-w-sm">
+                Potencia tu equipo con IA y logra nuevos resultados.
               </p>
-              <div className="flex space-x-4">
-                {["LinkedIn", "Twitter", "YouTube"].map((social) => (
-                  <Button key={social} variant="outline" size="sm" className="rounded-full bg-transparent">
-                    {social}
-                  </Button>
-                ))}
+            </div>
+
+            {/* Navigation */}
+            <div>
+              <h4 className="font-bold text-white mb-6 text-lg">Navegación</h4>
+              <ul className="space-y-4 text-slate-300">
+                <li>
+                  <a
+                    href="#hero"
+                    className="hover:text-cyan-400 transition-colors cursor-pointer"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      const element = document.querySelector("#hero")
+                      if (element) {
+                        const headerHeight = 80
+                        const elementPosition = element.offsetTop - headerHeight
+                        window.scrollTo({
+                          top: elementPosition,
+                          behavior: "smooth",
+                        })
+                      }
+                    }}
+                  >
+                    Inicio
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#soluciones"
+                    className="hover:text-cyan-400 transition-colors cursor-pointer"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      const element = document.querySelector("#soluciones")
+                      if (element) {
+                        const headerHeight = 80
+                        const elementPosition = element.offsetTop - headerHeight
+                        window.scrollTo({
+                          top: elementPosition,
+                          behavior: "smooth",
+                        })
+                      }
+                    }}
+                  >
+                    Enfoque
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#metodologia"
+                    className="hover:text-cyan-400 transition-colors cursor-pointer"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      const element = document.querySelector("#metodologia")
+                      if (element) {
+                        const headerHeight = 80
+                        const elementPosition = element.offsetTop - headerHeight
+                        window.scrollTo({
+                          top: elementPosition,
+                          behavior: "smooth",
+                        })
+                      }
+                    }}
+                  >
+                    Método
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#contacto"
+                    className="hover:text-cyan-400 transition-colors cursor-pointer"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      const element = document.querySelector("#contacto")
+                      if (element) {
+                        const headerHeight = 80
+                        const elementPosition = element.offsetTop - headerHeight
+                        window.scrollTo({
+                          top: elementPosition,
+                          behavior: "smooth",
+                        })
+                      }
+                    }}
+                  >
+                    Diagnóstico
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Contact */}
+            <div>
+              <h4 className="font-bold text-white mb-6 text-lg">Contacto</h4>
+              <div className="space-y-4 text-slate-300">
+                <div className="flex items-center space-x-3">
+                  <MessageSquare className="w-5 h-5 text-cyan-400" />
+                  <a href="mailto:hola@meikify.cl" className="hover:text-cyan-400 transition-colors">
+                    hola@meikify.cl
+                  </a>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <span className="text-cyan-400">📞</span>
+                  <a href="tel:+56958995317" className="hover:text-cyan-400 transition-colors">
+                    +56 9 5899 5317
+                  </a>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <Calendar className="w-5 h-5 text-cyan-400" />
+                  <a href="#" className="hover:text-cyan-400 transition-colors">
+                    Agendar diagnóstico
+                  </a>
+                </div>
+
+                {/* Social Media Icons */}
+                <div className="flex space-x-4 pt-4">
+                  <a href="#" className="text-cyan-400 hover:text-cyan-300 transition-colors">
+                    <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
+                      <img src="/images/linkedin_logo.png" alt="Meikify Logo" className="w-auto object-contain" />
+                    </div>
+                  </a>
+                  <a href="#" className="text-cyan-400 hover:text-cyan-300 transition-colors">
+                    <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded flex items-center justify-center">
+                      <img src="/images/instagram_logo.png" alt="instagram" className="w-auto object-contain" />
+                    </div>
+                  </a>
+                  <a href="#" className="text-cyan-400 hover:text-cyan-300 transition-colors">
+                    <div className="w-8 h-8 bg-red-600 rounded flex items-center justify-center">
+                      <span className="text-white text-sm">▶</span>
+                    </div>
+                  </a>
+                  <a href="#" className="text-cyan-400 hover:text-cyan-300 transition-colors">
+                    <div className="w-8 h-8 bg-black rounded flex items-center justify-center">
+                      <img src="/images/tiktok_logo.avif" alt="instagram" className="w-auto object-contain" />
+                    </div>
+                  </a>
+                </div>
               </div>
-            </div>
-
-            <div>
-              <h4 className="font-bold text-slate-900 mb-4">Soluciones</h4>
-              <ul className="space-y-3 text-slate-600">
-                <li>
-                  <a
-                    href="#"
-                    className="hover:transition-colors"
-                    style={{ color: "inherit" }}
-                    onMouseEnter={(e) => (e.target.style.color = "#00bce7")}
-                    onMouseLeave={(e) => (e.target.style.color = "inherit")}
-                  >
-                    Automatización RPA
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="hover:transition-colors"
-                    style={{ color: "inherit" }}
-                    onMouseEnter={(e) => (e.target.style.color = "#00bce7")}
-                    onMouseLeave={(e) => (e.target.style.color = "inherit")}
-                  >
-                    IA Conversacional
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="hover:transition-colors"
-                    style={{ color: "inherit" }}
-                    onMouseEnter={(e) => (e.target.style.color = "#00bce7")}
-                    onMouseLeave={(e) => (e.target.style.color = "inherit")}
-                  >
-                    Integración de Sistemas
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="hover:transition-colors"
-                    style={{ color: "inherit" }}
-                    onMouseEnter={(e) => (e.target.style.color = "#00bce7")}
-                    onMouseLeave={(e) => (e.target.style.color = "inherit")}
-                  >
-                    Analytics Predictivo
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-bold text-slate-900 mb-4">Contacto</h4>
-              <ul className="space-y-3 text-slate-600">
-                <li>hola@meikify.cl</li>
-                <li>+56 9 XXXX XXXX</li>
-                <li>Santiago, Chile</li>
-                <li>Lun-Vie 9:00-18:00</li>
-              </ul>
             </div>
           </div>
 
-          <div className="border-t border-gray-200 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-slate-500">&copy; 2024 Meikify. Revolucionando el futuro del trabajo.</p>
-            <div className="flex space-x-6 mt-4 md:mt-0">
-              <a href="#" className="text-slate-500 hover:text-cyan-600 transition-colors">
-                Privacidad
-              </a>
-              <a href="#" className="text-slate-500 hover:text-cyan-600 transition-colors">
-                Términos
-              </a>
-              <a href="#" className="text-slate-500 hover:text-cyan-600 transition-colors">
-                Cookies
-              </a>
-            </div>
+          {/* Copyright */}
+          <div className="border-t border-slate-700 mt-12 pt-8">
+            <p className="text-slate-400 text-center">© 2025 Meikify. Todos los derechos reservados.</p>
           </div>
         </div>
       </footer>
