@@ -279,7 +279,18 @@ export default function MeikifyWebsite() {
 
     // Here you would normally send the form data to your backend
     console.log("Form submitted with reCAPTCHA token:", recaptchaToken)
-    alert("Formulario enviado correctamente!")
+  }
+
+  const phoneNumber = "56958995317"
+  const message =
+    "¡Hola! Me interesa conocer más sobre cómo la automatización inteligente transforma cada aspecto de mi operación ¿Podrían ayudarme con información?"
+
+  const handleClick = () => {
+    // Crear la URL de WhatsApp
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`
+
+    // Abrir en nueva ventana
+    window.open(whatsappUrl, "_blank", "noopener,noreferrer")
   }
 
   return (
@@ -302,7 +313,25 @@ export default function MeikifyWebsite() {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <div className="flex items-center">
-              <img src="/images/meikify-logo.webp" alt="Meikify Logo" className="w-auto object-contain" />
+              <a
+                href="#hero"
+                className="hover:text-cyan-400 transition-colors cursor-pointer"
+                onClick={(e) => {
+                  e.preventDefault()
+                  const element = document.querySelector("#hero")
+                  if (element) {
+                    const headerHeight = 80
+                    const elementPosition = element.offsetTop - headerHeight
+                    window.scrollTo({
+                      top: elementPosition,
+                      behavior: "smooth",
+                    })
+                  }
+                }}
+              >
+                <img src="/images/meikify-logo.webp" alt="Meikify Logo" className="w-auto object-contain"
+                style={{height: "36px"}}/>
+              </a>
             </div>
 
             {/* Navigation */}
@@ -310,8 +339,7 @@ export default function MeikifyWebsite() {
               {[
                 { name: "Soluciones", href: "#soluciones" },
                 { name: "Metodología", href: "#metodologia" },
-                { name: "Casos", href: "#casos" },
-                { name: "Contacto", href: "#contacto" },
+                { name: "Tecnologías", href: "#tecnologias" },
               ].map((item, index) => (
                 <a
                   key={item.name}
@@ -322,7 +350,7 @@ export default function MeikifyWebsite() {
                     const element = document.querySelector(item.href)
                     if (element) {
                       const headerHeight = 80 // Altura aproximada del header
-                      const elementPosition = element.offsetTop - headerHeight
+                      const elementPosition = (element as HTMLElement).offsetTop - headerHeight
                       window.scrollTo({
                         top: elementPosition,
                         behavior: "smooth",
@@ -338,7 +366,7 @@ export default function MeikifyWebsite() {
                 className="text-white px-6 py-2 rounded-full font-medium shadow-lg hover:shadow-xl transition-all duration-300"
                 style={{ background: "linear-gradient(to right, #00bce7, #0ea5e9)" }}
                 onClick={() => {
-                  const element = document.querySelector("#contacto")
+                  const element = document.querySelector("#diagnostico")
                   if (element) {
                     const headerHeight = 80
                     const elementPosition = element.offsetTop - headerHeight
@@ -360,13 +388,13 @@ export default function MeikifyWebsite() {
             >
               <div className="w-6 h-6 flex flex-col justify-center items-center">
                 <span
-                  className={`block w-5 h-0.5 bg-slate-700 transition-all duration-300 ${isMenuOpen ? "rotate-45 translate-y-1" : ""}`}
+                  className={`block w-5 h-0.5 bg-[#0ea5e9] transition-all duration-300 ${isMenuOpen ? "rotate-45 translate-y-1" : ""}`}
                 ></span>
                 <span
-                  className={`block w-5 h-0.5 bg-slate-700 mt-1 transition-all duration-300 ${isMenuOpen ? "opacity-0" : ""}`}
+                  className={`block w-5 h-0.5 bg-[#0ea5e9] mt-1 transition-all duration-300 ${isMenuOpen ? "opacity-0" : ""}`}
                 ></span>
                 <span
-                  className={`block w-5 h-0.5 bg-slate-700 mt-1 transition-all duration-300 ${isMenuOpen ? "-rotate-45 -translate-y-1" : ""}`}
+                  className={`block w-5 h-0.5 bg-[#0ea5e9] mt-1 transition-all duration-300 ${isMenuOpen ? "-rotate-45 -translate-y-1" : ""}`}
                 ></span>
               </div>
             </button>
@@ -379,8 +407,7 @@ export default function MeikifyWebsite() {
                 {[
                   { name: "Soluciones", href: "#soluciones" },
                   { name: "Metodología", href: "#metodologia" },
-                  { name: "Casos", href: "#casos" },
-                  { name: "Contacto", href: "#contacto" },
+                  { name: "Tecnologías", href: "#tecnologias" },
                 ].map((item) => (
                   <a
                     key={item.name}
@@ -455,34 +482,10 @@ export default function MeikifyWebsite() {
           </div>
 
           {/* Right Visual */}
-          <div 
-            id="content-robot" style={{
-              height: "92%",
-            }}>
-            <div className="relative w-full  flex items-center justify-center">
-              {/* Animated Background Elements
-              <div className="absolute inset-0">
-                {[...Array(6)].map((_, i) => (
-                  <div
-                    key={i}
-                    className={`absolute w-20 h-20 rounded-2xl bg-gradient-to-br ${
-                      i % 3 === 0
-                        ? "from-cyan-400 to-blue-500"
-                        : i % 3 === 1
-                          ? "from-yellow-400 to-orange-500"
-                          : "from-purple-400 to-pink-500"
-                    } opacity-20 animate-pulse`}
-                    style={{
-                      left: `${(i * 15) % 80}%`,
-                      top: `${(i * 20) % 70}%`,
-                      animationDelay: `${i * 0.5}s`,
-                    }}
-                  />
-                ))}
-              </div> */}
-
+          <div id="content-robot">
+            <div className="relative w-full flex items-center justify-center py-8 min-h-[400px]">
               {/* Robot GIF */}
-              <div className="relative z-10">
+              <div className="relative z-10 hidden md:block">
                 <video
                   ref={videoRef}
                   src="/videos/video_home.mp4"
@@ -490,12 +493,13 @@ export default function MeikifyWebsite() {
                   loop
                   muted
                   playsInline
-                  className="w-full h-[500px] rounded-2xl shadow-2xl shadow-cyan-500/50"
+                  className="w-full max-w-lg md:max-w-2xl h-auto md:h-[600px] rounded-2xl shadow-2xl shadow-cyan-500/80 mx-auto"
                   style={{
-                      backgroundColor: "transparent",
-                      width: "100%",
-                      height: "500px",
-                    }}
+                    backgroundColor: "transparent",
+                    width: "100%",
+                    maxHeight: "500px",
+                    height: "auto",
+                  }}
                 />
               </div>
             </div>
@@ -717,9 +721,7 @@ export default function MeikifyWebsite() {
         </div>
       </section>
 
-      
-
-       {/* Tecnologías de Vanguardia */}
+      {/* Tecnologías de Vanguardia */}
       <section
         id="tecnologias"
         className="py-24 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 text-white relative overflow-hidden"
@@ -732,58 +734,6 @@ export default function MeikifyWebsite() {
             className="w-full max-w-2xl h-auto object-contain"
           />
         </div>
-
-        {/* Animated Stars Background */}
-        <div className="absolute inset-0">
-          {[...Array(50)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute bg-white rounded-full animate-pulse"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                width: `${Math.random() * 3 + 1}px`,
-                height: `${Math.random() * 3 + 1}px`,
-                animationDelay: `${Math.random() * 3}s`,
-                animationDuration: `${Math.random() * 2 + 1}s`,
-                opacity: Math.random() * 0.8 + 0.2,
-              }}
-            />
-          ))}
-
-          {/* Larger twinkling stars */}
-          {[...Array(20)].map((_, i) => (
-            <div
-              key={`star-${i}`}
-              className="absolute bg-cyan-400 rounded-full"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                width: `${Math.random() * 2 + 2}px`,
-                height: `${Math.random() * 2 + 2}px`,
-                animation: `twinkle ${Math.random() * 3 + 2}s ease-in-out infinite`,
-                animationDelay: `${Math.random() * 2}s`,
-              }}
-            />
-          ))}
-
-          {/* Yellow twinkling stars */}
-          {[...Array(15)].map((_, i) => (
-            <div
-              key={`yellow-star-${i}`}
-              className="absolute bg-yellow-400 rounded-full"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                width: `${Math.random() * 2 + 1}px`,
-                height: `${Math.random() * 2 + 1}px`,
-                animation: `twinkle ${Math.random() * 4 + 3}s ease-in-out infinite`,
-                animationDelay: `${Math.random() * 3}s`,
-              }}
-            />
-          ))}
-        </div>
-
         <div className="container mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
             <h2 className="text-5xl font-bold mb-6">
@@ -800,7 +750,7 @@ export default function MeikifyWebsite() {
             </p>
           </div>
 
-           {/* Animated Logo Carousel - Full Width */}
+          {/* Animated Logo Carousel - Full Width */}
           <div className="relative -mx-6 lg:-mx-0">
             {/* Extend carousel to full viewport width */}
             <div className="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]">
@@ -813,84 +763,75 @@ export default function MeikifyWebsite() {
                 <div className="flex animate-scroll-infinite">
                   {/* First Set of Logos */}
                   {[
-                    { name: "Docker", icon: "🐳", color: "from-blue-400 to-blue-600" },
-                    { name: "Kubernetes", icon: "⚙️", color: "from-blue-500 to-purple-600" },
-                    { name: "Python", icon: "🐍", color: "from-yellow-400 to-blue-500" },
-                    { name: "Node.js", icon: "🟢", color: "from-green-400 to-green-600" },
-                    { name: "React", icon: "⚛️", color: "from-cyan-400 to-blue-500" },
-                    { name: "PostgreSQL", icon: "🐘", color: "from-blue-600 to-indigo-600" },
-                    { name: "Redis", icon: "🔴", color: "from-red-500 to-red-600" },
-                    { name: "AWS", icon: "☁️", color: "from-orange-400 to-yellow-500" },
-                    { name: "OpenAI", icon: "🤖", color: "from-green-400 to-teal-500" },
-                    { name: "Zapier", icon: "⚡", color: "from-orange-500 to-red-500" },
-                    { name: "Slack", icon: "💬", color: "from-purple-500 to-pink-500" },
-                    { name: "GitHub", icon: "🐙", color: "from-gray-600 to-gray-800" },
-                    { name: "TensorFlow", icon: "🧠", color: "from-orange-500 to-red-600" },
-                    { name: "MongoDB", icon: "🍃", color: "from-green-500 to-green-700" },
-                    { name: "Firebase", icon: "🔥", color: "from-yellow-500 to-orange-600" },
+                    { name: "Portainer", src: "images/stack/portainer_1.png", description: "Container Management" },
+                    { name: "Traefik", src: "images/stack/traefik.svg", description: "Reverse Proxy" },
+                    { name: "MinIO", src: "images/stack/minio.svg", description: "Object Storage" },
+                    { name: "n8n", src: "images/stack/n8n.svg", description: "Workflow Automation" },
+                    { name: "PostgreSQL", src: "images/stack/postgresql.svg", description: "Database" },
+                    { name: "Redis", src: "images/stack/redis.svg", description: "In-Memory DB" },
+                    { name: "Evolution API", src: "images/stack/evolutionapi.svg", description: "WhatsApp API" },
+                    { name: "Chatwoot", src: "images/stack/chatwoot.svg", description: "Customer Support" },
+                    { name: "Flowise", src: "images/stack/flowise.svg", description: "AI Workflows" },
+                    { name: "RabbitMQ", src: "images/stack/rabbitmq.svg", description: "Message Broker" },
+                    { name: "Qdrant", src: "images/stack/qdrant.svg", description: "Vector Database" },
+                    { name: "Supabase", src: "images/stack/supabase.svg", description: "Backend Platform" },
+                    { name: "NocoDB", src: "images/stack/nocodb.svg", description: "No-Code Database" },
                   ].map((tech, index) => (
-                    <div key={`first-${index}`} className="flex-shrink-0 mx-8 group cursor-pointer">
-                      <div
-                        className={`w-24 h-24 rounded-2xl bg-gradient-to-br ${tech.color} flex items-center justify-center text-4xl shadow-xl group-hover:shadow-2xl group-hover:scale-110 transition-all duration-300`}
-                      >
-                        {tech.icon}
+                    <div key={`first-${index}`} className="flex-shrink-0 mx-6 group cursor-pointer">
+                      <div className="w-28 h-28 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center p-4 shadow-xl group-hover:shadow-2xl group-hover:scale-110 group-hover:bg-white/20 transition-all duration-300">
+                        <img
+                          src={tech.src || "/placeholder.svg"}
+                          alt={tech.name}
+                        />
                       </div>
-                      <div className="text-center mt-4 text-sm font-medium text-slate-300 group-hover:text-white transition-colors">
-                        {tech.name}
+                      <div className="text-center mt-3 space-y-1">
+                        <div className="text-sm font-bold text-white group-hover:text-cyan-300 transition-colors">
+                          {tech.name}
+                        </div>
+                        <div className="text-xs text-slate-400 group-hover:text-slate-300 transition-colors">
+                          {tech.description}
+                        </div>
                       </div>
                     </div>
                   ))}
 
                   {/* Duplicate Set for Seamless Loop */}
                   {[
-                    { name: "Docker", icon: "🐳", color: "from-blue-400 to-blue-600" },
-                    { name: "Kubernetes", icon: "⚙️", color: "from-blue-500 to-purple-600" },
-                    { name: "Python", icon: "🐍", color: "from-yellow-400 to-blue-500" },
-                    { name: "Node.js", icon: "🟢", color: "from-green-400 to-green-600" },
-                    { name: "React", icon: "⚛️", color: "from-cyan-400 to-blue-500" },
-                    { name: "PostgreSQL", icon: "🐘", color: "from-blue-600 to-indigo-600" },
-                    { name: "Redis", icon: "🔴", color: "from-red-500 to-red-600" },
-                    { name: "AWS", icon: "☁️", color: "from-orange-400 to-yellow-500" },
-                    { name: "OpenAI", icon: "🤖", color: "from-green-400 to-teal-500" },
-                    { name: "Zapier", icon: "⚡", color: "from-orange-500 to-red-500" },
-                    { name: "Slack", icon: "💬", color: "from-purple-500 to-pink-500" },
-                    { name: "GitHub", icon: "🐙", color: "from-gray-600 to-gray-800" },
-                    { name: "TensorFlow", icon: "🧠", color: "from-orange-500 to-red-600" },
-                    { name: "MongoDB", icon: "🍃", color: "from-green-500 to-green-700" },
-                    { name: "Firebase", icon: "🔥", color: "from-yellow-500 to-orange-600" },
+                    { name: "Portainer", src: "images/stack/portainer_1.png", description: "Container Management" },
+                    { name: "Traefik", src: "images/stack/traefik.svg", description: "Reverse Proxy" },
+                    { name: "MinIO", src: "images/stack/minio.svg", description: "Object Storage" },
+                    { name: "n8n", src: "images/stack/n8n.svg", description: "Workflow Automation" },
+                    { name: "PostgreSQL", src: "images/stack/postgresql.svg", description: "Database" },
+                    { name: "Redis", src: "images/stack/redis.svg", description: "In-Memory DB" },
+                    { name: "Evolution API", src: "images/stack/evolutionapi.svg", description: "WhatsApp API" },
+                    { name: "Chatwoot", src: "images/stack/chatwoot.svg", description: "Customer Support" },
+                    { name: "Flowise", src: "images/stack/flowise.svg", description: "AI Workflows" },
+                    { name: "RabbitMQ", src: "images/stack/rabbitmq.svg", description: "Message Broker" },
+                    { name: "Qdrant", src: "images/stack/qdrant.svg", description: "Vector Database" },
+                    { name: "Supabase", src: "images/stack/supabase.svg", description: "Backend Platform" },
+                    { name: "NocoDB", src: "images/stack/nocodb.svg", description: "No-Code Database" },
                   ].map((tech, index) => (
-                    <div key={`second-${index}`} className="flex-shrink-0 mx-8 group cursor-pointer">
-                      <div
-                        className={`w-24 h-24 rounded-2xl bg-gradient-to-br ${tech.color} flex items-center justify-center text-4xl shadow-xl group-hover:shadow-2xl group-hover:scale-110 transition-all duration-300`}
-                      >
-                        {tech.icon}
+                    <div key={`second-${index}`} className="flex-shrink-0 mx-6 group cursor-pointer">
+                      <div className="w-28 h-28 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center p-4 shadow-xl group-hover:shadow-2xl group-hover:scale-110 group-hover:bg-white/20 transition-all duration-300">
+                        <img
+                          src={tech.src || "/placeholder.svg"}
+                          alt={tech.name}
+                          
+                        />
                       </div>
-                      <div className="text-center mt-4 text-sm font-medium text-slate-300 group-hover:text-white transition-colors">
-                        {tech.name}
+                      <div className="text-center mt-3 space-y-1">
+                        <div className="text-sm font-bold text-white group-hover:text-cyan-300 transition-colors">
+                          {tech.name}
+                        </div>
+                        <div className="text-xs text-slate-400 group-hover:text-slate-300 transition-colors">
+                          {tech.description}
+                        </div>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
-          </div>
-
-
-          {/* Stats */}
-          <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            {[
-              { number: "50+", label: "Tecnologías integradas" },
-              { number: "99.9%", label: "Uptime garantizado" },
-              { number: "24/7", label: "Monitoreo activo" },
-              { number: "∞", label: "Escalabilidad" },
-            ].map((stat, index) => (
-              <div key={index} className="space-y-2">
-                <div className="text-3xl font-bold text-transparent bg-gradient-to-r from-cyan-400 to-yellow-400 bg-clip-text">
-                  {stat.number}
-                </div>
-                <div className="text-sm text-slate-400">{stat.label}</div>
-              </div>
-            ))}
           </div>
         </div>
       </section>
@@ -1089,62 +1030,10 @@ export default function MeikifyWebsite() {
         </div>
       </section>
 
-      {/* Futuristic CTA */}
-      <section
-        id="contacto"
-        className="py-24 bg-gradient-to-r from-slate-900 via-blue-900 to-cyan-900 text-white relative overflow-hidden overflow-visible"
-      >
-        {/* Robot centrado, con manos sobresaliendo del fondo */}
-        <div className="absolute bottom-[-65px] left-1/2 transform -translate-x-1/2 z-10 pointer-events-none">
-          <img
-            src="/images/robot_pose_mano.png"
-            alt="Robot Meikify"
-            className="w-[800px] md:w-[900px] lg:w-[1000px] xl:w-[1100px]"
-          />
-        </div>
-
-        <div className="container mx-auto px-6 text-center relative z-20">
-          <div
-            className={`mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-12 ${
-              visibleSections.has("contacto") ? "animate-fade-in-scale" : ""
-            }`}
-          >
-            {/* Texto alineado a la izquierda */}
-            <div className="flex-1 text-left">
-              <h2 className="text-6xl w-3/4 font-black leading-tight text-left">
-                ¿Listo para el{" "}
-                <span className="text-transparent bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text">
-                  salto cuántico
-                </span>
-                ?
-              </h2>
-              <p className="text-2xl text-blue-100 leading-relaxed mt-6 text-left w-3/4">
-                Tu competencia ya está automatizando. No te quedes atrás en la revolución de la IA.
-              </p>
-            </div>
-            {/* Features alineados a la derecha */}
-            <div className="flex-1 pt-12 md:pt-0 md:pl-12">
-              <div className="grid grid-cols-1 md:grid-cols-1 gap-8 justify-items-end">
-                <h3 className="text-3xl font-bold text-cyan-300">Comienza tu transformación</h3>
-                  <div className="space-y-4">
-                    {[
-                      { icon: <Star className="w-6 h-6" />, text: "Diagnóstico gratuito en 24h" },
-                      { icon: <Shield className="w-6 h-6" />, text: "Garantía de resultados" },
-                      { icon: <Users className="w-6 h-6" />, text: "Soporte 24/7 especializado" },
-                    ].map((feature, index) => (
-                      <div key={index} className="flex items-center space-x-4 text-cyan-300">
-                        {feature.icon}
-                        <span className="font-medium text-lg">{feature.text}</span>
-                      </div>
-                    ))}
-                  </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      
+      
       {/* Contact Form Section */}
-      <section className="py-24 bg-gradient-to-br from-slate-800 via-slate-900 to-blue-900 text-white">
+      <section id="diagnostico" className="py-24 bg-gradient-to-br from-slate-800 via-slate-900 to-blue-900 text-white">
         <div className="container mx-auto px-6">
           <div className="max-w-2xl mx-auto">
             {/* Header */}
@@ -1294,6 +1183,83 @@ export default function MeikifyWebsite() {
         </div>
       </section>
 
+      {/* Futuristic CTA */}
+      <section
+        id="contacto"
+        className="py-24 bg-gradient-to-r from-slate-900 via-blue-900 to-cyan-900 text-white relative overflow-hidden overflow-visible"
+      >
+        {/* Robot centrado, con manos sobresaliendo del fondo */}
+        <div className="absolute bottom-[-65px] left-1/2 transform -translate-x-1/2 z-10 pointer-events-none hidden md:block">
+          <img
+            src="/images/robot_pose_mano.png"
+            alt="Robot Meikify"
+            className="w-[800px] md:w-[900px] lg:w-[1000px] xl:w-[1100px]"
+          />
+        </div>
+
+        <div className="container mx-auto px-6 text-center relative z-20">
+          <div
+            className={`mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-12 ${
+              visibleSections.has("contacto") ? "animate-fade-in-scale" : ""
+            }`}
+          >
+            {/* Texto alineado a la izquierda */}
+            <div className="flex-1 text-left">
+              <h2 className="text-6xl w-3/4 font-black leading-tight text-left">
+                ¿Listo para el{" "}
+                <span className="text-transparent bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text">
+                  salto cuántico
+                </span>
+                ?
+              </h2>
+              <p className="text-2xl text-blue-100 leading-relaxed mt-6 text-left w-3/4">
+                Tu competencia ya está automatizando. No te quedes atrás en la revolución de la IA.
+              </p>
+            </div>
+            {/* Features alineados a la derecha */}
+            <div className="flex-1 pt-12 md:pt-0 md:pl-12">
+              <div className="grid grid-cols-1 md:grid-cols-1 gap-8 justify-items-end">
+                <h3 className="text-3xl font-bold text-cyan-300">Comienza tu transformación</h3>
+                  <div className="space-y-4">
+                    {[
+                      { icon: <Star className="w-6 h-6" />, text: "Diagnóstico gratuito en 24h" },
+                      { icon: <Shield className="w-6 h-6" />, text: "Garantía de resultados" },
+                      { icon: <Users className="w-6 h-6" />, text: "Soporte 24/7 especializado" },
+                    ].map((feature, index) => (
+                      <div key={index} className="flex items-center space-x-4 text-cyan-300">
+                        {feature.icon}
+                        <span className="font-medium text-lg">{feature.text}</span>
+                      </div>
+                    ))}
+                  </div>
+              </div>
+              <div className="mt-8">
+                <Button
+                    onClick={handleClick}
+                    size="lg"
+                    variant="outline"
+                    className="border-2 text-lg font-bold rounded-full transition-all duration-300 transform hover:scale-105 bg-transparent w-full sm:w-auto px-8 py-4"
+                    style={{
+                      borderColor: "#00bce7",
+                      color: "#00bce7",
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.target as HTMLElement).style.backgroundColor = "#00bce7";
+                      (e.target as HTMLElement).style.color = "#1e293b"
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.target as HTMLElement).style.backgroundColor = "transparent";
+                      (e.target as HTMLElement).style.color = "#00bce7"
+                    }}
+                  >
+                    <Calendar className="mr-3" size={20} />
+                    Agendar Demo VIP
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Modern Footer */}
       <footer className="bg-slate-900 py-16 text-white">
@@ -1350,7 +1316,7 @@ export default function MeikifyWebsite() {
                       }
                     }}
                   >
-                    Enfoque
+                    Soluciones
                   </a>
                 </li>
                 <li>
@@ -1370,16 +1336,16 @@ export default function MeikifyWebsite() {
                       }
                     }}
                   >
-                    Método
+                    Metodología
                   </a>
                 </li>
                 <li>
                   <a
-                    href="#contacto"
+                    href="#diagnostico"
                     className="hover:text-cyan-400 transition-colors cursor-pointer"
                     onClick={(e) => {
                       e.preventDefault()
-                      const element = document.querySelector("#contacto")
+                      const element = document.querySelector("#diagnostico")
                       if (element) {
                         const headerHeight = 80
                         const elementPosition = element.offsetTop - headerHeight
@@ -1408,35 +1374,35 @@ export default function MeikifyWebsite() {
                 </div>
                 <div className="flex items-center space-x-3">
                   <span className="text-cyan-400">📞</span>
-                  <a href="tel:+56958995317" className="hover:text-cyan-400 transition-colors">
+                  <a href="#" onClick={handleClick} className="hover:text-cyan-400 transition-colors">
                     +56 9 5899 5317
                   </a>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Calendar className="w-5 h-5 text-cyan-400" />
-                  <a href="#" className="hover:text-cyan-400 transition-colors">
+                  <a href="https://calendar.notion.so/meet/joanmeikify/diary" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">
                     Agendar diagnóstico
                   </a>
                 </div>
 
                 {/* Social Media Icons */}
                 <div className="flex space-x-4 pt-4">
-                  <a href="#" className="text-cyan-400 hover:text-cyan-300 transition-colors">
+                  <a href="https://www.linkedin.com/company/meikifycl/" target="_blank" rel="noopener noreferrer">
                     <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
                       <img src="/images/linkedin_logo.png" alt="Meikify Logo" className="w-auto object-contain" />
                     </div>
                   </a>
-                  <a href="#" className="text-cyan-400 hover:text-cyan-300 transition-colors">
+                  <a href="https://www.instagram.com/joan.meikify/" target="_blank" rel="noopener noreferrer">
                     <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded flex items-center justify-center">
                       <img src="/images/instagram_logo.png" alt="instagram" className="w-auto object-contain" />
                     </div>
                   </a>
-                  <a href="#" className="text-cyan-400 hover:text-cyan-300 transition-colors">
+                  <a href="https://www.youtube.com/@joan.meikify" target="_blank" rel="noopener noreferrer">
                     <div className="w-8 h-8 bg-red-600 rounded flex items-center justify-center">
                       <span className="text-white text-sm">▶</span>
                     </div>
                   </a>
-                  <a href="#" className="text-cyan-400 hover:text-cyan-300 transition-colors">
+                  <a href="https://www.tiktok.com/@joan.meikify" target="_blank" rel="noopener noreferrer">
                     <div className="w-8 h-8 bg-black rounded flex items-center justify-center">
                       <img src="/images/tiktok_logo.avif" alt="instagram" className="w-auto object-contain" />
                     </div>
