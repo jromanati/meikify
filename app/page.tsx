@@ -339,7 +339,7 @@ export default function MeikifyWebsite() {
               {[
                 { name: "Soluciones", href: "#soluciones" },
                 { name: "Metodología", href: "#metodologia" },
-                { name: "Tecnologías", href: "#tecnologias" },
+                { name: "Casos", href: "#casos" },
               ].map((item, index) => (
                 <a
                   key={item.name}
@@ -407,7 +407,7 @@ export default function MeikifyWebsite() {
                 {[
                   { name: "Soluciones", href: "#soluciones" },
                   { name: "Metodología", href: "#metodologia" },
-                  { name: "Tecnologías", href: "#tecnologias" },
+                  { name: "Casos", href: "#casos" },
                 ].map((item) => (
                   <a
                     key={item.name}
@@ -457,9 +457,9 @@ export default function MeikifyWebsite() {
       {/* Revolutionary Hero */}
       <section
         id="hero"
-        className="relative min-h-[60vh] flex items-center bg-gradient-to-br from-slate-50 via-white to-cyan-50"
+        className="bg-gradient-to-br flex from-slate-50 items-center min-h-[60vh] relative to-cyan-50 via-white"
       >
-        <div className="container mx-auto px-6 grid lg:grid-cols-2 gap-18 items-center">
+        <div className="container mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
           <div className={`space-y-8 relative z-10 ${visibleSections.has("hero") ? "animate-fade-in-left" : ""}`}>
             <div className="space-y-6">
@@ -479,28 +479,45 @@ export default function MeikifyWebsite() {
                 multiplica su productividad.
               </p>
             </div>
+            {/* Stats */}
+            <div className="grid grid-cols-3 gap-6 pt-8 border-t border-gray-200">
+              {[
+                { number: "95%", label: "Menos errores" },
+                { number: "24/7", label: "Operación continua" },
+                { number: "10x", label: "Más productividad" },
+              ].map((stat, index) => (
+                <div key={index} className="text-center">
+                  <div className="text-3xl font-bold" style={{ color: "#00bce7" }}>
+                    {stat.number}
+                  </div>
+                  <div className="text-sm text-slate-600">{stat.label}</div>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Right Visual */}
-          <div id="content-robot">
-            <div className="relative w-full flex items-center justify-center py-8 min-h-[400px]">
-              {/* Robot GIF */}
-              <div className="relative z-10 hidden md:block">
-                <video
-                  ref={videoRef}
-                  src="/videos/video_home.mp4"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="w-full max-w-lg md:max-w-2xl h-auto md:h-[600px] rounded-2xl shadow-2xl shadow-cyan-500/80 mx-auto"
-                  style={{
-                    backgroundColor: "transparent",
-                    width: "100%",
-                    maxHeight: "500px",
-                    height: "auto",
-                  }}
-                />
+          <div className="relative">
+            <div className="relative w-full h-96 lg:h-[500px] flex items-center justify-center">
+              {/* Animated Background Elements */}
+              <div className="absolute inset-0">
+                {[...Array(6)].map((_, i) => (
+                  <div
+                    key={i}
+                    className={`absolute w-20 h-20 rounded-2xl bg-gradient-to-br ${
+                      i % 3 === 0
+                        ? "from-cyan-400 to-blue-500"
+                        : i % 3 === 1
+                          ? "from-yellow-400 to-orange-500"
+                          : "from-purple-400 to-pink-500"
+                    } opacity-20 animate-pulse`}
+                    style={{
+                      left: `${(i * 15) % 80}%`,
+                      top: `${(i * 20) % 70}%`,
+                      animationDelay: `${i * 0.5}s`,
+                    }}
+                  />
+                ))}
               </div>
             </div>
           </div>
@@ -525,7 +542,7 @@ export default function MeikifyWebsite() {
           </div>
 
           {/* Layout con Robot a la derecha */}
-          <div className="grid lg:grid-cols-12 gap-8 items-start">
+          <div className="grid lg:grid-cols-3 gap-8 relative z-10">
             {/* Cards de beneficios - 8 columnas */}
             <div className="lg:col-span-8 grid md:grid-cols-2 gap-8">
               {[
@@ -586,17 +603,14 @@ export default function MeikifyWebsite() {
               ))}
             </div>
 
-            {/* Robot - 4 columnas */}
+            {/* Robot - 4 columnas 
             <div className="lg:col-span-4 flex justify-center items-start">
               <div className="relative">
-                {/* Efectos de fondo para el robot */}
                 <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/20 to-yellow-400/20 rounded-full blur-3xl animate-pulse"></div>
                 <div
                   className="absolute inset-0 bg-gradient-to-l from-purple-400/10 to-pink-400/10 rounded-full blur-2xl animate-pulse"
                   style={{ animationDelay: "1s" }}
                 ></div>
-
-                {/* Robot */}
                 <div className={`relative z-10 `}>
                   <img
                     src="/images/meikify-robot-new.png"
@@ -604,10 +618,9 @@ export default function MeikifyWebsite() {
                     className="w-full max-w-sm h-auto object-contain opacity-90 drop-shadow-2xl"
                   />
                 </div>
-
-                
               </div>
             </div>
+            */}
           </div>
 
           
@@ -720,123 +733,7 @@ export default function MeikifyWebsite() {
           </div>
         </div>
       </section>
-
-      {/* Tecnologías de Vanguardia */}
-      <section
-        id="tecnologias"
-        className="py-24 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 text-white relative overflow-hidden"
-      >
-        {/* Robot Background */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-30">
-          <img
-            src="/images/robot_esfera.png"
-            alt="Meikify Robot Background"
-            className="w-full max-w-2xl h-auto object-contain"
-          />
-        </div>
-        <div className="container mx-auto px-6 relative z-10">
-          <div className="text-center mb-16">
-            <h2 className="text-5xl font-bold mb-6">
-              Tecnologías de{" "}
-              <span className="text-transparent bg-gradient-to-r from-cyan-400 to-yellow-400 bg-clip-text">
-                vanguardia
-              </span>{" "}
-              que impulsan tu crecimiento
-            </h2>
-            <p className="text-xl text-slate-300 max-w-4xl mx-auto leading-relaxed">
-              Nuestro stack tecnológico combina plataformas de orquestación de contenedores, herramientas de integración
-              de workflows, bases de datos avanzadas y motores de mensajería, garantizando soluciones eficientes,
-              seguras y escalables.
-            </p>
-          </div>
-
-          {/* Animated Logo Carousel - Full Width */}
-          <div className="relative -mx-6 lg:-mx-0">
-            {/* Extend carousel to full viewport width */}
-            <div className="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]">
-              {/* Gradient Overlays */}
-              <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-slate-900 to-transparent z-10"></div>
-              <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-slate-900 to-transparent z-10"></div>
-
-              {/* Carousel Container */}
-              <div className="overflow-hidden py-8">
-                <div className="flex animate-scroll-infinite">
-                  {/* First Set of Logos */}
-                  {[
-                    { name: "Portainer", src: "images/stack/portainer_1.png", description: "Container Management" },
-                    { name: "Traefik", src: "images/stack/traefik.svg", description: "Reverse Proxy" },
-                    { name: "MinIO", src: "images/stack/minio.svg", description: "Object Storage" },
-                    { name: "n8n", src: "images/stack/n8n.svg", description: "Workflow Automation" },
-                    { name: "PostgreSQL", src: "images/stack/postgresql.svg", description: "Database" },
-                    { name: "Redis", src: "images/stack/redis.svg", description: "In-Memory DB" },
-                    { name: "Evolution API", src: "images/stack/evolutionapi.svg", description: "WhatsApp API" },
-                    { name: "Chatwoot", src: "images/stack/chatwoot.svg", description: "Customer Support" },
-                    { name: "Flowise", src: "images/stack/flowise.svg", description: "AI Workflows" },
-                    { name: "RabbitMQ", src: "images/stack/rabbitmq.svg", description: "Message Broker" },
-                    { name: "Qdrant", src: "images/stack/qdrant.svg", description: "Vector Database" },
-                    { name: "Supabase", src: "images/stack/supabase.svg", description: "Backend Platform" },
-                    { name: "NocoDB", src: "images/stack/nocodb.svg", description: "No-Code Database" },
-                  ].map((tech, index) => (
-                    <div key={`first-${index}`} className="flex-shrink-0 mx-6 group cursor-pointer">
-                      <div className="w-28 h-28 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center p-4 shadow-xl group-hover:shadow-2xl group-hover:scale-110 group-hover:bg-white/20 transition-all duration-300">
-                        <img
-                          src={tech.src || "/placeholder.svg"}
-                          alt={tech.name}
-                        />
-                      </div>
-                      <div className="text-center mt-3 space-y-1">
-                        <div className="text-sm font-bold text-white group-hover:text-cyan-300 transition-colors">
-                          {tech.name}
-                        </div>
-                        <div className="text-xs text-slate-400 group-hover:text-slate-300 transition-colors">
-                          {tech.description}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-
-                  {/* Duplicate Set for Seamless Loop */}
-                  {[
-                    { name: "Portainer", src: "images/stack/portainer_1.png", description: "Container Management" },
-                    { name: "Traefik", src: "images/stack/traefik.svg", description: "Reverse Proxy" },
-                    { name: "MinIO", src: "images/stack/minio.svg", description: "Object Storage" },
-                    { name: "n8n", src: "images/stack/n8n.svg", description: "Workflow Automation" },
-                    { name: "PostgreSQL", src: "images/stack/postgresql.svg", description: "Database" },
-                    { name: "Redis", src: "images/stack/redis.svg", description: "In-Memory DB" },
-                    { name: "Evolution API", src: "images/stack/evolutionapi.svg", description: "WhatsApp API" },
-                    { name: "Chatwoot", src: "images/stack/chatwoot.svg", description: "Customer Support" },
-                    { name: "Flowise", src: "images/stack/flowise.svg", description: "AI Workflows" },
-                    { name: "RabbitMQ", src: "images/stack/rabbitmq.svg", description: "Message Broker" },
-                    { name: "Qdrant", src: "images/stack/qdrant.svg", description: "Vector Database" },
-                    { name: "Supabase", src: "images/stack/supabase.svg", description: "Backend Platform" },
-                    { name: "NocoDB", src: "images/stack/nocodb.svg", description: "No-Code Database" },
-                  ].map((tech, index) => (
-                    <div key={`second-${index}`} className="flex-shrink-0 mx-6 group cursor-pointer">
-                      <div className="w-28 h-28 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center p-4 shadow-xl group-hover:shadow-2xl group-hover:scale-110 group-hover:bg-white/20 transition-all duration-300">
-                        <img
-                          src={tech.src || "/placeholder.svg"}
-                          alt={tech.name}
-                          
-                        />
-                      </div>
-                      <div className="text-center mt-3 space-y-1">
-                        <div className="text-sm font-bold text-white group-hover:text-cyan-300 transition-colors">
-                          {tech.name}
-                        </div>
-                        <div className="text-xs text-slate-400 group-hover:text-slate-300 transition-colors">
-                          {tech.description}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Casos de Éxito
+      {/* Casos de Éxito*/}
       <section id="casos" className="py-24 bg-gray-50">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
@@ -894,7 +791,7 @@ export default function MeikifyWebsite() {
           </div>
         </div>
       </section>
-      */}
+      
       {/* Before & After Automation Section */}
       <section
         id="antes-despues"
@@ -1030,7 +927,124 @@ export default function MeikifyWebsite() {
         </div>
       </section>
 
-      
+       {/* Quién está detrás de Meikify */}
+      <section
+        id="fundador"
+        className="py-24 bg-gradient-to-br from-slate-50 via-white to-cyan-50 relative overflow-hidden"
+      >
+        {/* Background decorative elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-20 right-10 w-40 h-40 bg-gradient-to-br from-cyan-200/20 to-blue-200/20 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 left-10 w-32 h-32 bg-gradient-to-br from-yellow-200/20 to-orange-200/20 rounded-full blur-2xl"></div>
+        </div>
+
+        <div className="container mx-auto px-6 relative z-10">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl font-bold text-slate-900 mb-6">
+              Quién está{" "}
+              <span className="text-transparent bg-gradient-to-r from-cyan-500 to-blue-600 bg-clip-text">
+                detrás de Meikify
+              </span>
+            </h2>
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+              Conoce la experiencia y visión que impulsa cada transformación digital
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-16 items-center max-w-6xl mx-auto">
+            {/* Imagen del fundador */}
+            <div className={`${visibleSections.has("fundador") ? "animate-fade-in-left" : ""}`}>
+              <div className="relative">
+                {/* Placeholder para la imagen - aquí puedes agregar la foto de Joan */}
+                <div className="w-full max-w-md mx-auto">
+                  <div className="relative">
+                    {/* Efectos decorativos alrededor de la imagen */}
+                    <div className="absolute -top-4 -left-4 w-full h-full bg-gradient-to-br from-cyan-400/20 to-blue-500/20 rounded-3xl blur-xl"></div>
+                    <div className="absolute -bottom-4 -right-4 w-full h-full bg-gradient-to-br from-yellow-400/20 to-orange-500/20 rounded-3xl blur-xl"></div>
+
+                    {/* Contenedor de la imagen */}
+                    <div className="relative bg-white rounded-3xl p-2 shadow-2xl">
+                      <div className="w-full h-96 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center">
+                        {/* Placeholder - reemplazar con la imagen real */}
+                        <div className="text-center text-gray-500">
+                          <div className="w-72 h-72 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+                            <img
+                              src="/images/joan_toro.jpeg"
+                              alt="Joan Toro"
+                              width={96}
+                              height={96}
+                              className="rounded-full object-cover h-full w-full shadow-lg"
+                            />
+                          </div>
+                          <p className="text-sm">Joan Toro</p>
+                          <p className="text-xs text-gray-400 mt-1">Fundador de Meikify</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Contenido del fundador */}
+            <div className={`space-y-8 ${visibleSections.has("fundador") ? "animate-fade-in-right" : ""}`}>
+              <div className="space-y-6">
+                <div className="inline-flex items-center space-x-2 bg-cyan-100 text-cyan-800 px-4 py-2 rounded-full text-sm font-medium">
+                  <Star size={16} />
+                  <span>12+ años de experiencia</span>
+                </div>
+
+                <h3 className="text-3xl font-bold text-slate-900 leading-tight">Soy Joan Toro, fundador de Meikify</h3>
+
+                <div className="space-y-4 text-lg text-slate-600 leading-relaxed">
+                  <p>
+                    Con más de <strong>12 años de experiencia</strong> liderando transformaciones digitales, he ayudado
+                    a empresas a optimizar sus procesos, reducir costos y mejorar la experiencia de sus clientes
+                    alineando la tecnología con la estrategia del negocio.
+                  </p>
+
+                  <p>
+                    Mi propósito es claro:{" "}
+                    <strong className="text-cyan-600">generar resultados concretos y sostenibles</strong>.
+                  </p>
+
+                  <p>
+                    En Meikify trabajamos con una metodología que pone en el centro a las{" "}
+                    <strong>personas, los procesos y la tecnología</strong>, asegurando que cada solución no solo sea
+                    eficiente, sino también adoptada y valorada por quienes la usan.
+                  </p>
+
+                  <p>
+                    Integro mi experiencia como <strong>ejecutivo, docente y consultor</strong> para crear estrategias
+                    ágiles y personalizadas, combinando automatización, inteligencia artificial y desarrollo personal
+                    para hacer que las cosas pasen.
+                  </p>
+                </div>
+
+                {/* Credenciales destacadas */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6">
+                  {[
+                    { icon: <Brain className="w-6 h-6" />, title: "Ejecutivo", desc: "Liderazgo estratégico" },
+                    { icon: <Users className="w-6 h-6" />, title: "Docente", desc: "Formación especializada" },
+                    { icon: <Target className="w-6 h-6" />, title: "Consultor", desc: "Resultados medibles" },
+                  ].map((credential, index) => (
+                    <div
+                      key={index}
+                      className="text-center p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300"
+                    >
+                      <div className="inline-flex p-3 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 text-white mb-3">
+                        {credential.icon}
+                      </div>
+                      <h4 className="font-bold text-slate-900 mb-1">{credential.title}</h4>
+                      <p className="text-sm text-slate-600">{credential.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
       
       {/* Contact Form Section */}
       <section id="diagnostico" className="py-24 bg-gradient-to-br from-slate-800 via-slate-900 to-blue-900 text-white">
@@ -1188,37 +1202,25 @@ export default function MeikifyWebsite() {
         id="contacto"
         className="py-24 bg-gradient-to-r from-slate-900 via-blue-900 to-cyan-900 text-white relative overflow-hidden overflow-visible"
       >
-        {/* Robot centrado, con manos sobresaliendo del fondo */}
-        <div className="absolute bottom-[-65px] left-1/2 transform -translate-x-1/2 z-10 pointer-events-none hidden md:block">
-          <img
-            src="/images/robot_pose_mano.png"
-            alt="Robot Meikify"
-            className="w-[800px] md:w-[900px] lg:w-[1000px] xl:w-[1100px]"
-          />
-        </div>
-
-        <div className="container mx-auto px-6 text-center relative z-20">
-          <div
-            className={`mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-12 ${
-              visibleSections.has("contacto") ? "animate-fade-in-scale" : ""
-            }`}
-          >
+        <div className="container mx-auto px-6 relative z-20">
+          <div className={`${visibleSections.has("contacto") ? "animate-fade-in-scale" : ""}`}>
             {/* Texto alineado a la izquierda */}
-            <div className="flex-1 text-left">
-              <h2 className="text-6xl w-3/4 font-black leading-tight text-left">
+            {/* Título centrado */}
+            <div className="text-center mb-16">
+              <h2 className="text-6xl font-black leading-tight mb-6">
                 ¿Listo para el{" "}
                 <span className="text-transparent bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text">
                   salto cuántico
                 </span>
                 ?
               </h2>
-              <p className="text-2xl text-blue-100 leading-relaxed mt-6 text-left w-3/4">
+              <p className="text-2xl text-blue-100 leading-relaxed">
                 Tu competencia ya está automatizando. No te quedes atrás en la revolución de la IA.
               </p>
             </div>
             {/* Features alineados a la derecha */}
-            <div className="flex-1 pt-12 md:pt-0 md:pl-12">
-              <div className="grid grid-cols-1 md:grid-cols-1 gap-8 justify-items-end">
+            <div className="text-center mb-16">
+              <div className="grid grid-cols-1 md:grid-cols-1 gap-8 justify-items-center">
                 <h3 className="text-3xl font-bold text-cyan-300">Comienza tu transformación</h3>
                   <div className="space-y-4">
                     {[

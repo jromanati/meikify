@@ -23,7 +23,25 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="16x16"
         href="/images/favicon-16x16.png" />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <script dangerouslySetInnerHTML={{ __html: `
+          (function(d,t) {
+            var BASE_URL=\"https://chatwoot.meikify.cl\";
+            var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+            g.src=BASE_URL+\"/packs/js/sdk.js\";
+            g.defer = true;
+            g.async = true;
+            s.parentNode.insertBefore(g,s);
+            g.onload=function(){
+              window.chatwootSDK.run({
+                websiteToken: 'PjRGYXYz2DTMPx7MTjAw2jws',
+                baseUrl: BASE_URL
+              })
+            }
+          })(document,\"script\");
+        `}} />
+      </body>
     </html>
   )
 }
