@@ -3,8 +3,27 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Meikify',
-  description: 'Created by Metras',
+  description: "Automatiza, optimiza y escala tu negocio con inteligencia artificial.",
   generator: 'metras',
+  keywords: "automatización, inteligencia artificial, IA, chatbots, procesos, eficiencia, productividad",
+  authors: [{ name: "Meikify" }],
+  openGraph: {
+    title: "Meikify - Automatización con IA para tu negocio",
+    description: "Automatiza, optimiza y escala tu negocio con inteligencia artificial.",
+    url: "https://meikify.cl",
+    siteName: "Meikify",
+    locale: "es_CL",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Meikify - Automatización con IA para tu negocio",
+    description: "Automatiza, optimiza y escala tu negocio con inteligencia artificial.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 }
 
 export default function RootLayout({

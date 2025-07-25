@@ -4,22 +4,10 @@ import { useState, useEffect, useRef } from "react"
 import type React from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import {
-  ArrowRight,
-  Play,
-  Sparkles,
-  Target,
-  Rocket,
-  Shield,
-  Zap,
-  Brain,
-  Users,
-  Cog,
-  TrendingUp,
-  MessageSquare,
-  Calendar,
-  Star,
-} from "lucide-react"
+import { Sparkles, Target, Rocket, Shield, Brain, Users, Cog, TrendingUp, MessageSquare, Star } from "lucide-react"
+
+import { useAnalytics } from "@/hooks/use-analytics"
+import { ScrollTracker } from "@/components/scroll-tracker"
 
 // Agregar después de los imports
 const animationStyles = `
@@ -152,6 +140,7 @@ const animationStyles = `
 `
 
 export default function MeikifyWebsite() {
+  const analytics = useAnalytics()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState(0)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
@@ -277,15 +266,42 @@ export default function MeikifyWebsite() {
       return
     }
 
-    // Here you would normally send the form data to your backend
+    // Get form data
+    const formData = new FormData(e.target as HTMLFormElement)
+    const formValues = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      whatsapp: formData.get("whatsapp"),
+      company: formData.get("company"),
+      position: formData.get("position"),
+      process: formData.get("process"),
+    }
+
+    // Track form submission
+    analytics.trackFormSubmit("diagnostico_form", {
+      company: formValues.company?.toString(),
+      position: formValues.position?.toString(),
+      lead_value: 150,
+    })
+
     console.log("Form submitted with reCAPTCHA token:", recaptchaToken)
+    console.log("Form data:", formValues)
+    alert("Formulario enviado correctamente!")
   }
+
+  // Track page view on mount
+  useEffect(() => {
+    analytics.trackPageView("Meikify Homepage", window.location.href)
+  }, [analytics])
 
   const phoneNumber = "56958995317"
   const message =
     "¡Hola! Me interesa conocer más sobre cómo la automatización inteligente transforma cada aspecto de mi operación ¿Podrían ayudarme con información?"
 
-  const handleClick = () => {
+  const handleWhatsAppClick = (source = "general") => {
+    // Track WhatsApp click
+    analytics.trackWhatsAppClick(source)
+
     // Crear la URL de WhatsApp
     const whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`
 
@@ -293,8 +309,20 @@ export default function MeikifyWebsite() {
     window.open(whatsappUrl, "_blank", "noopener,noreferrer")
   }
 
+  const handleDemoRequest = () => {
+    // Track demo request
+    analytics.trackDemoRequest("demo_vip")
+
+    // Abrir calendario de citas
+    window.open("https://calendar.notion.so/meet/joanmeikify/diary", "_blank", "noopener,noreferrer")
+  }
+
+  const handleCTAClick = (buttonText: string, section: string) => {
+    analytics.trackCTAClick(buttonText, section)
+  }
+
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden pt-28">
+    <div className="min-h-screen bg-white overflow-x-hidden pt-20">
       <style dangerouslySetInnerHTML={{ __html: animationStyles }} />
       {/* Floating Elements */}
       <div className="fixed inset-0 pointer-events-none z-0">
@@ -329,8 +357,12 @@ export default function MeikifyWebsite() {
                   }
                 }}
               >
-                <img src="/images/meikify-logo.webp" alt="Meikify Logo" className="w-auto object-contain"
-                style={{height: "36px"}}/>
+                <img
+                  src="/images/meikify-logo.webp"
+                  alt="Meikify Logo"
+                  className="w-auto object-contain"
+                  style={{ height: "36px" }}
+                />
               </a>
             </div>
 
@@ -355,6 +387,8 @@ export default function MeikifyWebsite() {
                         top: elementPosition,
                         behavior: "smooth",
                       })
+                      // Track CTA click
+                      analytics.trackCTAClick(item.name, "header")
                     }
                   }}
                 >
@@ -374,6 +408,8 @@ export default function MeikifyWebsite() {
                       top: elementPosition,
                       behavior: "smooth",
                     })
+                    // Track CTA click
+                    analytics.trackCTAClick("Diagnóstico Gratis", "header")
                   }
                 }}
               >
@@ -424,6 +460,8 @@ export default function MeikifyWebsite() {
                           top: elementPosition,
                           behavior: "smooth",
                         })
+                        // Track CTA click
+                        analytics.trackCTAClick(item.name, "mobile_menu")
                       }
                     }}
                   >
@@ -443,6 +481,8 @@ export default function MeikifyWebsite() {
                         top: elementPosition,
                         behavior: "smooth",
                       })
+                      // Track CTA click
+                      analytics.trackCTAClick("Diagnóstico Gratis", "mobile_menu")
                     }
                   }}
                 >
@@ -457,13 +497,18 @@ export default function MeikifyWebsite() {
       {/* Revolutionary Hero */}
       <section
         id="hero"
-        className="bg-gradient-to-br flex from-slate-50 items-center min-h-[60vh] relative to-cyan-50 via-white"
+        className="relative py-4 flex items-center bg-gradient-to-br from-slate-50 via-white to-cyan-50"
       >
-        <div className="container mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left Content */}
-          <div className={`space-y-8 relative z-10 ${visibleSections.has("hero") ? "animate-fade-in-left" : ""}`}>
-            <div className="space-y-6">
-              <h1 className="text-6xl lg:text-7xl font-black leading-none">
+        <div className="container mx-auto px-6">
+          {/* Contenido centrado */}
+          <div className="text-center max-w-4xl mx-auto space-y-12">
+            <div className="inline-flex items-center space-x-2 bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full text-sm font-medium">
+              <Sparkles size={16} />
+              <span>Revolución en automatización</span>
+            </div>
+
+            <div className="space-y-8">
+              <h1 className="text-6xl lg:text-8xl font-black leading-none">
                 <span className="block text-slate-900">Automatiza.</span>
                 <span
                   className="block text-transparent bg-clip-text"
@@ -474,50 +519,15 @@ export default function MeikifyWebsite() {
                 <span className="block text-yellow-500">Escala.</span>
               </h1>
 
-              <p className="text-xl text-slate-600 leading-relaxed max-w-lg">
-                Transformamos tu negocio con <strong>IA avanzada</strong> que libera a tu equipo de tareas repetitivas y
-                multiplica su productividad.
-              </p>
-            </div>
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-6 pt-8 border-t border-gray-200">
-              {[
-                { number: "95%", label: "Menos errores" },
-                { number: "24/7", label: "Operación continua" },
-                { number: "10x", label: "Más productividad" },
-              ].map((stat, index) => (
-                <div key={index} className="text-center">
-                  <div className="text-3xl font-bold" style={{ color: "#00bce7" }}>
-                    {stat.number}
-                  </div>
-                  <div className="text-sm text-slate-600">{stat.label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
+              <div className="max-w-2xl mx-auto space-y-6">
+                <h2 className="text-3xl lg:text-4xl font-bold text-slate-800 leading-tight">
+                  Haz que tu negocio trabaje por ti.
+                </h2>
 
-          {/* Right Visual */}
-          <div className="relative">
-            <div className="relative w-full h-96 lg:h-[500px] flex items-center justify-center">
-              {/* Animated Background Elements */}
-              <div className="absolute inset-0">
-                {[...Array(6)].map((_, i) => (
-                  <div
-                    key={i}
-                    className={`absolute w-20 h-20 rounded-2xl bg-gradient-to-br ${
-                      i % 3 === 0
-                        ? "from-cyan-400 to-blue-500"
-                        : i % 3 === 1
-                          ? "from-yellow-400 to-orange-500"
-                          : "from-purple-400 to-pink-500"
-                    } opacity-20 animate-pulse`}
-                    style={{
-                      left: `${(i * 15) % 80}%`,
-                      top: `${(i * 20) % 70}%`,
-                      animationDelay: `${i * 0.5}s`,
-                    }}
-                  />
-                ))}
+                <p className="text-xl text-slate-600 leading-relaxed">
+                  Con inteligencia artificial y automatización avanzada, liberamos a tu equipo de lo repetitivo para que
+                  se concentre en lo que realmente importa: <strong>crecer, innovar y superar a la competencia</strong>.
+                </p>
               </div>
             </div>
           </div>
@@ -537,7 +547,7 @@ export default function MeikifyWebsite() {
               </span>
             </h2>
             <p className="text-xl text-slate-300 max-w-3xl mx-auto">
-              Descubre cómo la automatización inteligente transforma cada aspecto de tu operación
+              Así es cómo la automatización inteligente transforma tu operación y te coloca por delante del mercado
             </p>
           </div>
 
@@ -548,33 +558,32 @@ export default function MeikifyWebsite() {
               {[
                 {
                   icon: <Shield className="w-16 h-16" />,
-                  title: "Cero errores humanos",
+                  title: "Precisión sin margen de error",
                   description:
-                    "Elimina completamente los errores manuales con sistemas que aprenden y se perfeccionan continuamente.",
+                    "Adiós a las fallas manuales: nuestros sistemas aprenden y mejoran solos para alcanzar una exactitud del 99.9%.",
                   color: "from-green-400 to-emerald-500",
                   stat: "99.9% precisión",
                 },
                 {
                   icon: <Rocket className="w-16 h-16" />,
-                  title: "Velocidad sobrehumana",
+                  title: "Velocidad que rompe récords",
                   description:
-                    "Procesa miles de tareas en segundos. Lo que antes tomaba días, ahora se completa instantáneamente.",
+                    "Lo que antes tomaba días, ahora sucede en segundos gracias a procesos hasta 1000x más rápidos.",
                   color: "from-[#00bce7] to-blue-500",
                   stat: "1000x más rápido",
                 },
                 {
                   icon: <TrendingUp className="w-16 h-16" />,
-                  title: "Crecimiento exponencial",
+                  title: "Escala sin límites",
                   description:
-                    "Escala sin límites. Nuestros sistemas crecen contigo, adaptándose a cualquier volumen de trabajo.",
+                    "Crece sin preocuparte por el volumen: nuestros sistemas evolucionan contigo y no pierden calidad.",
                   color: "from-yellow-400 to-orange-500",
                   stat: "Escalabilidad infinita",
                 },
                 {
                   icon: <Brain className="w-16 h-16" />,
-                  title: "Inteligencia adaptativa",
-                  description:
-                    "Sistemas que aprenden de tu negocio y se adaptan automáticamente a nuevos desafíos y oportunidades.",
+                  title: "Inteligencia que se adapta a ti",
+                  description: "Los sistemas aprenden de tus procesos y se ajustan automáticamente a nuevos retos.",
                   color: "from-purple-400 to-pink-500",
                   stat: "Aprendizaje continuo",
                 },
@@ -602,28 +611,7 @@ export default function MeikifyWebsite() {
                 </Card>
               ))}
             </div>
-
-            {/* Robot - 4 columnas 
-            <div className="lg:col-span-4 flex justify-center items-start">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/20 to-yellow-400/20 rounded-full blur-3xl animate-pulse"></div>
-                <div
-                  className="absolute inset-0 bg-gradient-to-l from-purple-400/10 to-pink-400/10 rounded-full blur-2xl animate-pulse"
-                  style={{ animationDelay: "1s" }}
-                ></div>
-                <div className={`relative z-10 `}>
-                  <img
-                    src="/images/meikify-robot-new.png"
-                    alt="Meikify AI Robot"
-                    className="w-full max-w-sm h-auto object-contain opacity-90 drop-shadow-2xl"
-                  />
-                </div>
-              </div>
-            </div>
-            */}
           </div>
-
-          
         </div>
       </section>
 
@@ -632,13 +620,14 @@ export default function MeikifyWebsite() {
         <div className="container mx-auto px-6">
           <div className="text-center mb-20">
             <h2 className="text-5xl font-bold text-slate-900 mb-6">
-              Metodología{" "}
+              Una metodología centrada en las{" "}
               <span className="text-transparent bg-gradient-to-r from-cyan-500 to-blue-600 bg-clip-text">
-                revolucionaria
+                personas y los resultados
               </span>
             </h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-              Un proceso científico que garantiza resultados extraordinarios en tiempo récord
+              En Meikify creemos que la tecnología por sí sola no transforma nada. Por eso trabajamos con un enfoque que
+              pone a las personas primero y garantiza resultados reales.
             </p>
           </div>
 
@@ -650,35 +639,37 @@ export default function MeikifyWebsite() {
               {[
                 {
                   phase: "01",
-                  title: "Diagnóstico Cuántico",
+                  title: "People — Personas primero",
                   description:
-                    "Analizamos cada proceso con IA avanzada, identificando oportunidades invisibles al ojo humano.",
-                  icon: <Brain className="w-12 h-12" />,
+                    "Comprendemos a las personas que viven el cambio, más allá de los organigramas, para diseñar soluciones que realmente les ayuden.",
+                  icon: <Users className="w-12 h-12" />,
                   color: "from-purple-500 to-pink-500",
                   side: "left",
                 },
                 {
                   phase: "02",
-                  title: "Arquitectura Inteligente",
-                  description: "Diseñamos sistemas que piensan, aprenden y evolucionan automáticamente con tu negocio.",
-                  icon: <Cog className="w-12 h-12" />,
+                  title: "Perception — Cómo se percibe",
+                  description:
+                    "Medimos cómo se siente y percibe el cambio en la organización para asegurar su aceptación y adopción.",
+                  icon: <Brain className="w-12 h-12" />,
                   color: "from-[#00bce7] to-blue-500",
                   side: "right",
                 },
                 {
                   phase: "03",
-                  title: "Implementación Ninja",
+                  title: "Performance — Enfocados en resultados",
                   description:
-                    "Desplegamos sin interrumpir tu operación, con transiciones tan suaves que son imperceptibles.",
-                  icon: <Zap className="w-12 h-12" />,
+                    "Definimos y alineamos los objetivos antes de mover cualquier pieza, para que cada acción tenga propósito.",
+                  icon: <Target className="w-12 h-12" />,
                   color: "from-green-500 to-emerald-500",
                   side: "left",
                 },
                 {
                   phase: "04",
-                  title: "Evolución Continua",
-                  description: "Tu sistema mejora solo, aprende de cada interacción y se optimiza constantemente.",
-                  icon: <Target className="w-12 h-12" />,
+                  title: "Process — Optimizar con sentido",
+                  description:
+                    "Solo entonces optimizamos los flujos de trabajo y sumamos tecnología donde realmente genera valor.",
+                  icon: <Cog className="w-12 h-12" />,
                   color: "from-yellow-500 to-orange-500",
                   side: "right",
                 },
@@ -738,38 +729,53 @@ export default function MeikifyWebsite() {
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-5xl font-bold text-slate-900 mb-6">
-              Casos de{" "}
+              Historias reales.{" "}
               <span className="text-transparent bg-gradient-to-r from-cyan-500 to-blue-600 bg-clip-text">
-                éxito reales
+                Resultados reales
               </span>
             </h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-              Descubre cómo hemos transformado negocios como el tuyo
+              Así hemos transformado empresas como la tuya con soluciones medibles y sostenibles
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-1 lg:grid-cols-3 gap-8">
             {[
-              {
-                title: "Onboarding automatizado",
-                description:
-                  "Automatizamos el proceso completo de onboarding de clientes para una empresa fintech, reduciendo el tiempo de 5 días a 2 horas.",
-                impact: "90% reducción de tiempo",
-                industry: "Fintech",
-              },
-              {
-                title: "Gestión de inventario inteligente",
-                description:
-                  "Implementamos un sistema de reposición automática que predice demanda y optimiza stock en tiempo real.",
-                impact: "40% menos costos de inventario",
-                industry: "E-commerce",
-              },
               {
                 title: "Atención al cliente 24/7",
                 description:
-                  "Desarrollamos un chatbot inteligente que resuelve 80% de consultas automáticamente y deriva casos complejos.",
-                impact: "80% consultas automatizadas",
+                  "Desarrollamos un chatbot que atiende de manera autónoma las consultas de los clientes las 24 horas, los 7 días de la semana, resolviendo la mayoría de las interacciones sin intervención humana. Esto permitió a la empresa liberar a su equipo para enfocarse en tareas de mayor valor.",
+                metrics: [
+                  "80% de las consultas resueltas automáticamente",
+                  "Reducción de tiempos de respuesta a segundos",
+                  "Incremento en la satisfacción de los clientes",
+                ],
                 industry: "Servicios",
+                icon: "/images/robot_icon.png",
+              },
+              {
+                title: "Agente calificador de leads",
+                description:
+                  "Automatizamos la calificación de prospectos para priorizar los más valiosos, reduciendo el tiempo de seguimiento y aumentando significativamente la efectividad del equipo comercial.",
+                metrics: [
+                  "50% de aumento en la tasa de cierre",
+                  "Respuesta a leads en menos de 5 minutos",
+                  "Mejora en la calidad de los prospectos contactados",
+                ],
+                industry: "Legal",
+                icon: "/images/legal.png",
+              },
+              {
+                title: "Generación automática de imágenes",
+                description:
+                  "Implementamos un sistema que genera fotografías de productos en minutos con IA, eliminando la necesidad de sesiones fotográficas costosas y lentas. Esto permitió lanzar nuevos productos más rápido y con menor costo.",
+                metrics: [
+                  "Producción de imágenes en minutos",
+                  "Reducción de costos en más de 60%",
+                  "Mayor velocidad en lanzamientos y campañas",
+                ],
+                industry: "Retail",
+                icon: "/images/photo.png",
               },
             ].map((useCase, index) => (
               <Card
@@ -779,19 +785,33 @@ export default function MeikifyWebsite() {
                 }`}
               >
                 <CardContent className="p-8">
-                  <div className="text-sm font-semibold mb-2" style={{ color: "#00bce7" }}>
+                  <div className="text-4xl mb-4 flex justify-center items-center">
+                    <img src={useCase.icon || "/placeholder.svg"} alt="Robot Meikify" className="w-[40px] h-[40px]" />
+                  </div>
+                  <div className="text-sm font-semibold mb-2 text-center" style={{ color: "#00bce7" }}>
                     {useCase.industry}
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 mb-4">{useCase.title}</h3>
-                  <p className="text-gray-600 mb-6 leading-relaxed">{useCase.description}</p>
-                  <div className="text-lg font-bold text-green-600">{useCase.impact}</div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-4 text-center">{useCase.title}</h3>
+                  <p className="text-gray-600 mb-6 leading-relaxed text-sm">{useCase.description}</p>
+
+                  <div className="space-y-2">
+                    <h4 className="font-semibold text-slate-900 text-sm">Métricas clave:</h4>
+                    <ul className="space-y-1">
+                      {useCase.metrics.map((metric, metricIndex) => (
+                        <li key={metricIndex} className="text-sm text-slate-600 flex items-start">
+                          <span className="text-green-500 mr-2">•</span>
+                          <strong>{metric}</strong>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </CardContent>
               </Card>
             ))}
           </div>
         </div>
       </section>
-      
+
       {/* Before & After Automation Section */}
       <section
         id="antes-despues"
@@ -927,7 +947,7 @@ export default function MeikifyWebsite() {
         </div>
       </section>
 
-       {/* Quién está detrás de Meikify */}
+      {/* Quién está detrás de Meikify */}
       <section
         id="fundador"
         className="py-24 bg-gradient-to-br from-slate-50 via-white to-cyan-50 relative overflow-hidden"
@@ -994,30 +1014,25 @@ export default function MeikifyWebsite() {
                   <span>12+ años de experiencia</span>
                 </div>
 
-                <h3 className="text-3xl font-bold text-slate-900 leading-tight">Soy Joan Toro, fundador de Meikify</h3>
+                <h3 className="text-3xl font-bold text-slate-900 leading-tight">La visión detrás de Meikify</h3>
 
                 <div className="space-y-4 text-lg text-slate-600 leading-relaxed">
+                  <p className="text-xl font-semibold text-slate-800">Soy Joan Toro, fundador de Meikify.</p>
+
                   <p>
-                    Con más de <strong>12 años de experiencia</strong> liderando transformaciones digitales, he ayudado
-                    a empresas a optimizar sus procesos, reducir costos y mejorar la experiencia de sus clientes
-                    alineando la tecnología con la estrategia del negocio.
+                    Llevo más de <strong>12 años ayudando a empresas</strong> a transformar su forma de trabajar,
+                    combinando estrategia, tecnología y personas para obtener resultados concretos y sostenibles.
                   </p>
 
                   <p>
-                    Mi propósito es claro:{" "}
-                    <strong className="text-cyan-600">generar resultados concretos y sostenibles</strong>.
+                    Mi propósito es claro: <strong className="text-cyan-600">hacer que las cosas pasen</strong> con
+                    soluciones ágiles, humanas y eficaces.
                   </p>
 
                   <p>
-                    En Meikify trabajamos con una metodología que pone en el centro a las{" "}
-                    <strong>personas, los procesos y la tecnología</strong>, asegurando que cada solución no solo sea
-                    eficiente, sino también adoptada y valorada por quienes la usan.
-                  </p>
-
-                  <p>
-                    Integro mi experiencia como <strong>ejecutivo, docente y consultor</strong> para crear estrategias
-                    ágiles y personalizadas, combinando automatización, inteligencia artificial y desarrollo personal
-                    para hacer que las cosas pasen.
+                    Integro mi experiencia como <strong>ejecutivo, docente y consultor</strong> para guiar a las
+                    organizaciones en su evolución, alineando sus equipos y procesos con la potencia de la inteligencia
+                    artificial y la automatización.
                   </p>
                 </div>
 
@@ -1041,11 +1056,27 @@ export default function MeikifyWebsite() {
                   ))}
                 </div>
               </div>
+
+              {/* CTA personalizado */}
+              <div className="pt-6">
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-8 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                  onClick={() => {
+                    // Track CTA click
+                    analytics.trackCTAClick("Conversar con Joan", "fundador")
+                    handleWhatsAppClick("fundador")
+                  }}
+                >
+                  <MessageSquare className="mr-3" size={20} />
+                  Conversar con Joan
+                </Button>
+              </div>
             </div>
           </div>
         </div>
       </section>
-      
+
       {/* Contact Form Section */}
       <section id="diagnostico" className="py-24 bg-gradient-to-br from-slate-800 via-slate-900 to-blue-900 text-white">
         <div className="container mx-auto px-6">
@@ -1168,7 +1199,7 @@ export default function MeikifyWebsite() {
 
                 {/* Submit Button */}
                 <div className="pt-4">
-                   <Button
+                  <Button
                     type="submit"
                     size="lg"
                     disabled={!recaptchaToken}
@@ -1177,6 +1208,11 @@ export default function MeikifyWebsite() {
                         ? "bg-gray-400 cursor-not-allowed"
                         : "bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
                     } text-white`}
+                    onClick={() => {
+                      if (recaptchaToken) {
+                        analytics.trackCTAClick("Generar diagnóstico con IA", "formulario")
+                      }
+                    }}
                   >
                     <Sparkles className="mr-3" size={20} />
                     Generar diagnóstico con IA
@@ -1204,7 +1240,6 @@ export default function MeikifyWebsite() {
       >
         <div className="container mx-auto px-6 relative z-20">
           <div className={`${visibleSections.has("contacto") ? "animate-fade-in-scale" : ""}`}>
-            {/* Texto alineado a la izquierda */}
             {/* Título centrado */}
             <div className="text-center mb-16">
               <h2 className="text-6xl font-black leading-tight mb-6">
@@ -1218,44 +1253,43 @@ export default function MeikifyWebsite() {
                 Tu competencia ya está automatizando. No te quedes atrás en la revolución de la IA.
               </p>
             </div>
-            {/* Features alineados a la derecha */}
+            {/* Features alineados al centro */}
             <div className="text-center mb-16">
               <div className="grid grid-cols-1 md:grid-cols-1 gap-8 justify-items-center">
                 <h3 className="text-3xl font-bold text-cyan-300">Comienza tu transformación</h3>
-                  <div className="space-y-4">
-                    {[
-                      { icon: <Star className="w-6 h-6" />, text: "Diagnóstico gratuito en 24h" },
-                      { icon: <Shield className="w-6 h-6" />, text: "Garantía de resultados" },
-                      { icon: <Users className="w-6 h-6" />, text: "Soporte 24/7 especializado" },
-                    ].map((feature, index) => (
-                      <div key={index} className="flex items-center space-x-4 text-cyan-300">
-                        {feature.icon}
-                        <span className="font-medium text-lg">{feature.text}</span>
-                      </div>
-                    ))}
-                  </div>
+                <div className="space-y-4">
+                  {[
+                    { icon: <Star className="w-6 h-6" />, text: "Diagnóstico gratuito en 24h" },
+                    { icon: <Shield className="w-6 h-6" />, text: "Garantía de resultados" },
+                    { icon: <Users className="w-6 h-6" />, text: "Soporte 24/7 especializado" },
+                  ].map((feature, index) => (
+                    <div key={index} className="flex items-center space-x-4 text-cyan-300">
+                      {feature.icon}
+                      <span className="font-medium text-lg">{feature.text}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
               <div className="mt-8">
                 <Button
-                    onClick={handleClick}
-                    size="lg"
-                    variant="outline"
-                    className="border-2 text-lg font-bold rounded-full transition-all duration-300 transform hover:scale-105 bg-transparent w-full sm:w-auto px-8 py-4"
-                    style={{
-                      borderColor: "#00bce7",
-                      color: "#00bce7",
-                    }}
-                    onMouseEnter={(e) => {
-                      (e.target as HTMLElement).style.backgroundColor = "#00bce7";
-                      (e.target as HTMLElement).style.color = "#1e293b"
-                    }}
-                    onMouseLeave={(e) => {
-                      (e.target as HTMLElement).style.backgroundColor = "transparent";
-                      (e.target as HTMLElement).style.color = "#00bce7"
-                    }}
-                  >
-                    <Calendar className="mr-3" size={20} />
-                    Agendar Demo VIP
+                  onClick={handleDemoRequest}
+                  size="lg"
+                  variant="outline"
+                  className="border-2 text-lg font-bold rounded-full transition-all duration-300 transform hover:scale-105 bg-transparent w-full sm:w-auto px-8 py-4"
+                  style={{
+                    borderColor: "#00bce7",
+                    color: "#00bce7",
+                  }}
+                  onMouseEnter={(e) => {
+                    ;(e.target as HTMLElement).style.backgroundColor = "#00bce7"
+                    ;(e.target as HTMLElement).style.color = "#1e293b"
+                  }}
+                  onMouseLeave={(e) => {
+                    ;(e.target as HTMLElement).style.backgroundColor = "transparent"
+                    ;(e.target as HTMLElement).style.color = "#00bce7"
+                  }}
+                >
+                  Agendar Demo VIP
                 </Button>
               </div>
             </div>
@@ -1376,14 +1410,12 @@ export default function MeikifyWebsite() {
                 </div>
                 <div className="flex items-center space-x-3">
                   <span className="text-cyan-400">📞</span>
-                  <a href="#" onClick={handleClick} className="hover:text-cyan-400 transition-colors">
+                  <a
+                    href="#"
+                    onClick={() => handleWhatsAppClick("footer")}
+                    className="hover:text-cyan-400 transition-colors"
+                  >
                     +56 9 5899 5317
-                  </a>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <Calendar className="w-5 h-5 text-cyan-400" />
-                  <a href="https://calendar.notion.so/meet/joanmeikify/diary" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">
-                    Agendar diagnóstico
                   </a>
                 </div>
 
@@ -1391,12 +1423,12 @@ export default function MeikifyWebsite() {
                 <div className="flex space-x-4 pt-4">
                   <a href="https://www.linkedin.com/company/meikifycl/" target="_blank" rel="noopener noreferrer">
                     <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
-                      <img src="/images/linkedin_logo.png" alt="Meikify Logo" className="w-auto object-contain" />
+                      <img src="/images/linkedin_logo.png" alt="LinkedIn" className="w-auto object-contain" />
                     </div>
                   </a>
                   <a href="https://www.instagram.com/joan.meikify/" target="_blank" rel="noopener noreferrer">
                     <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded flex items-center justify-center">
-                      <img src="/images/instagram_logo.png" alt="instagram" className="w-auto object-contain" />
+                      <img src="/images/instagram_logo.png" alt="Instagram" className="w-auto object-contain" />
                     </div>
                   </a>
                   <a href="https://www.youtube.com/@joan.meikify" target="_blank" rel="noopener noreferrer">
@@ -1406,7 +1438,7 @@ export default function MeikifyWebsite() {
                   </a>
                   <a href="https://www.tiktok.com/@joan.meikify" target="_blank" rel="noopener noreferrer">
                     <div className="w-8 h-8 bg-black rounded flex items-center justify-center">
-                      <img src="/images/tiktok_logo.avif" alt="instagram" className="w-auto object-contain" />
+                      <img src="/images/tiktok_logo.avif" alt="TikTok" className="w-auto object-contain" />
                     </div>
                   </a>
                 </div>
@@ -1420,6 +1452,31 @@ export default function MeikifyWebsite() {
           </div>
         </div>
       </footer>
+
+      {/* Scroll Tracking Component */}
+      <ScrollTracker
+        sections={[
+          "hero",
+          "soluciones",
+          "metodologia",
+          "casos",
+          "fundador",
+          "antes-despues",
+          "diagnostico",
+          "contacto",
+        ]}
+      />
+
+      {/* reCAPTCHA Global Callback */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.onRecaptchaChange = function(token) {
+              window.dispatchEvent(new CustomEvent('recaptcha-change', { detail: token }));
+            };
+          `,
+        }}
+      />
     </div>
   )
 }
