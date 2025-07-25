@@ -4,10 +4,34 @@ import { useState, useEffect, useRef } from "react"
 import type React from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Sparkles, Target, Rocket, Shield, Brain, Users, Cog, TrendingUp, MessageSquare, Star } from "lucide-react"
+import {
+  ArrowRight,
+  Play,
+  Sparkles,
+  Target,
+  Rocket,
+  Shield,
+  Zap,
+  Brain,
+  Users,
+  Cog,
+  TrendingUp,
+  MessageSquare,
+  Calendar,
+  Star,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+  X,
+} from "lucide-react"
 
 import { useAnalytics } from "@/hooks/use-analytics"
 import { ScrollTracker } from "@/components/scroll-tracker"
+declare global {
+  interface Window {
+    grecaptcha: any
+  }
+}
 
 // Agregar después de los imports
 const animationStyles = `
@@ -64,6 +88,26 @@ const animationStyles = `
     }
   }
 
+  @keyframes slideInFromTop {
+    from {
+      opacity: 0;
+      transform: translateY(-100px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+  }
+
   .animate-fade-in-left {
     animation: fadeInLeft 0.8s ease-out forwards;
   }
@@ -82,6 +126,14 @@ const animationStyles = `
 
   .animate-float {
     animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-slide-in-top {
+    animation: slideInFromTop 0.5s ease-out forwards;
+  }
+
+  .animate-pulse-gentle {
+    animation: pulse 2s ease-in-out infinite;
   }
 
   .animate-stagger-1 {
@@ -139,6 +191,68 @@ const animationStyles = `
   }
 `
 
+// Componente de notificación
+const Notification = ({ type, title, message, onClose }) => {
+  const getIcon = () => {
+    switch (type) {
+      case "success":
+        return <CheckCircle className="w-6 h-6 text-green-500" />
+      case "error":
+        return <XCircle className="w-6 h-6 text-red-500" />
+      case "warning":
+        return <AlertCircle className="w-6 h-6 text-yellow-500" />
+      default:
+        return <CheckCircle className="w-6 h-6 text-blue-500" />
+    }
+  }
+
+  const getBgColor = () => {
+    switch (type) {
+      case "success":
+        return "bg-green-50 border-green-200"
+      case "error":
+        return "bg-red-50 border-red-200"
+      case "warning":
+        return "bg-yellow-50 border-yellow-200"
+      default:
+        return "bg-blue-50 border-blue-200"
+    }
+  }
+
+  const getTextColor = () => {
+    switch (type) {
+      case "success":
+        return "text-green-800"
+      case "error":
+        return "text-red-800"
+      case "warning":
+        return "text-yellow-800"
+      default:
+        return "text-blue-800"
+    }
+  }
+
+  return (
+    <div className="fixed top-4 right-4 z-50 animate-slide-in-top">
+      <div className={`max-w-md rounded-xl border-2 ${getBgColor()} shadow-2xl backdrop-blur-sm`}>
+        <div className="p-6">
+          <div className="flex items-start space-x-4">
+            <div className="flex-shrink-0 animate-pulse-gentle">{getIcon()}</div>
+            <div className="flex-1 min-w-0">
+              <h3 className={`text-lg font-bold ${getTextColor()} mb-2`}>{title}</h3>
+              <p className={`text-sm ${getTextColor()} leading-relaxed`}>{message}</p>
+            </div>
+            <button onClick={onClose} className={`flex-shrink-0 ${getTextColor()} hover:opacity-70 transition-opacity`}>
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+
 export default function MeikifyWebsite() {
   const analytics = useAnalytics()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -148,6 +262,21 @@ export default function MeikifyWebsite() {
   const [visibleMethodologyCards, setVisibleMethodologyCards] = useState(new Set())
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
+  const [notification, setNotification] = useState(null)
+
+  // Función para mostrar notificaciones
+  const showNotification = (type, title, message) => {
+    console.log("Notification:", type, title, message)
+    setNotification({ type, title, message })
+    // Auto-cerrar después de 6 segundos
+    setTimeout(() => {
+      setNotification(null)
+    }, 6000)
+  }
+
+  const closeNotification = () => {
+    setNotification(null)
+  }
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -240,53 +369,106 @@ export default function MeikifyWebsite() {
   }, [])
 
   // Listen for reCAPTCHA events
-  useEffect(() => {
-    const handleRecaptchaChange = (event: CustomEvent) => {
-      setRecaptchaToken(event.detail)
-    }
+    useEffect(() => {
+      const handleRecaptchaChange = (event: CustomEvent) => {
+        setRecaptchaToken(event.detail)
+      }
 
-    window.addEventListener("recaptcha-change", handleRecaptchaChange as EventListener)
+      window.addEventListener("recaptcha-change", handleRecaptchaChange as EventListener)
 
-    return () => {
-      window.removeEventListener("recaptcha-change", handleRecaptchaChange as EventListener)
-    }
-  }, [])
+      return () => {
+        window.removeEventListener("recaptcha-change", handleRecaptchaChange as EventListener)
+      }
+    }, [])
 
   // reCAPTCHA callback function
-  const onRecaptchaChange = (token: string | null) => {
-    setRecaptchaToken(token)
-  }
+    const onRecaptchaChange = (token: string | null) => {
+      setRecaptchaToken(token)
+    }
 
-  // Form submission handler
-  const handleFormSubmit = (e: React.FormEvent) => {
+    // Form submission handler
+   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!recaptchaToken) {
-      alert("Por favor, completa la verificación reCAPTCHA")
+      showNotification(
+        "warning",
+        "Verificación requerida",
+        "Por favor, completa la verificación reCAPTCHA antes de continuar.",
+      )
       return
     }
 
-    // Get form data
+    // Obtener los datos del formulario
     const formData = new FormData(e.target as HTMLFormElement)
-    const formValues = {
-      name: formData.get("name"),
-      email: formData.get("email"),
-      whatsapp: formData.get("whatsapp"),
-      company: formData.get("company"),
-      position: formData.get("position"),
-      process: formData.get("process"),
+    const data = {
+      nombre: formData.get("name") as string,
+      correo: formData.get("email") as string,
+      whatsapp: formData.get("whatsapp") as string,
+      empresa: formData.get("company") as string,
+      cargo: formData.get("position") as string,
+      tarea_proceso: formData.get("process") as string,
     }
 
-    // Track form submission
-    analytics.trackFormSubmit("diagnostico_form", {
-      company: formValues.company?.toString(),
-      position: formValues.position?.toString(),
-      lead_value: 150,
-    })
+    // Mostrar estado de carga
+    const submitButton = document.querySelector('button[type="submit"]') as HTMLButtonElement
+    const originalText = submitButton.innerHTML
+    submitButton.innerHTML =
+      '<div class="flex items-center justify-center"><div class="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>Enviando...</div>'
+    submitButton.disabled = true
 
-    console.log("Form submitted with reCAPTCHA token:", recaptchaToken)
-    console.log("Form data:", formValues)
-    alert("Formulario enviado correctamente!")
+    const API_USERNAME = "admin"
+    const API_PASSWORD = "laCLAVEes123!"
+    const basicAuth = "Basic " + Buffer.from(`${API_USERNAME}:${API_PASSWORD}`).toString("base64")
+
+    showNotification(
+      "success",
+      "¡Formulario enviado exitosamente! 🎉",
+      "Recibirás tu diagnóstico personalizado con análisis y recomendaciones en tu correo o WhatsApp muy pronto. ¡Gracias por confiar en Meikify!",
+    )
+    
+    try {
+      const response = await fetch("https://n8nwebhook.meikify.cl/webhook/leads-diagnostico", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": basicAuth,
+        },
+        body: JSON.stringify(data),
+      })
+      console.log(response)
+      if (response.ok) {
+        showNotification(
+          "success",
+          "¡Formulario enviado exitosamente! 🎉",
+          "Recibirás tu diagnóstico personalizado con análisis y recomendaciones en tu correo o WhatsApp muy pronto. ¡Gracias por confiar en Meikify!",
+        )
+        ;(e.target as HTMLFormElement).reset()
+
+        // Resetear reCAPTCHA
+        if (window.grecaptcha) {
+          window.grecaptcha.reset()
+        }
+        setRecaptchaToken(null)
+      } else {
+        showNotification(
+          "error",
+          "Error de conexión 🌐",
+          `${response.status}`,
+        )
+      }
+    } catch (error) {
+      console.error("Error al enviar el formulario:", error)
+      showNotification(
+          "error",
+        "Error de conexión 🌐",
+        "Hubo un error al enviar el formulario. Por favor, inténtalo de nuevo o contáctanos directamente.",
+      )
+    } finally {
+      // Restaurar el botón
+      submitButton.innerHTML = originalText
+      submitButton.disabled = false
+    }
   }
 
   // Track page view on mount
@@ -324,6 +506,15 @@ export default function MeikifyWebsite() {
   return (
     <div className="min-h-screen bg-white overflow-x-hidden pt-20">
       <style dangerouslySetInnerHTML={{ __html: animationStyles }} />
+      {/* Notification */}
+      {notification && (
+        <Notification
+          type={notification.type}
+          title={notification.title}
+          message={notification.message}
+          onClose={closeNotification}
+        />
+      )}
       {/* Floating Elements */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div
@@ -590,7 +781,7 @@ export default function MeikifyWebsite() {
               ].map((benefit, index) => (
                 <Card
                   key={index}
-                  className={`bg-slate-800 border-slate-700 hover:bg-slate-750 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 group ${
+                  className={`bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 group ${
                     visibleSections.has("soluciones") ? `animate-fade-in-up animate-stagger-${index + 1}` : ""
                   }`}
                 >
@@ -1056,22 +1247,6 @@ export default function MeikifyWebsite() {
                   ))}
                 </div>
               </div>
-
-              {/* CTA personalizado */}
-              <div className="pt-6">
-                <Button
-                  size="lg"
-                  className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-8 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                  onClick={() => {
-                    // Track CTA click
-                    analytics.trackCTAClick("Conversar con Joan", "fundador")
-                    handleWhatsAppClick("fundador")
-                  }}
-                >
-                  <MessageSquare className="mr-3" size={20} />
-                  Conversar con Joan
-                </Button>
-              </div>
             </div>
           </div>
         </div>
@@ -1259,7 +1434,7 @@ export default function MeikifyWebsite() {
                 <h3 className="text-3xl font-bold text-cyan-300">Comienza tu transformación</h3>
                 <div className="space-y-4">
                   {[
-                    { icon: <Star className="w-6 h-6" />, text: "Diagnóstico gratuito en 24h" },
+                    { icon: <Star className="w-6 h-6" />, text: "Diagnóstico express" },
                     { icon: <Shield className="w-6 h-6" />, text: "Garantía de resultados" },
                     { icon: <Users className="w-6 h-6" />, text: "Soporte 24/7 especializado" },
                   ].map((feature, index) => (
@@ -1289,7 +1464,7 @@ export default function MeikifyWebsite() {
                     ;(e.target as HTMLElement).style.color = "#00bce7"
                   }}
                 >
-                  Agendar Demo VIP
+                  Diagnóstico Gratis
                 </Button>
               </div>
             </div>
@@ -1422,12 +1597,12 @@ export default function MeikifyWebsite() {
                 {/* Social Media Icons */}
                 <div className="flex space-x-4 pt-4">
                   <a href="https://www.linkedin.com/company/meikifycl/" target="_blank" rel="noopener noreferrer">
-                    <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
+                    <div className="w-8 h-8 rounded flex items-center justify-center">
                       <img src="/images/linkedin_logo.png" alt="LinkedIn" className="w-auto object-contain" />
                     </div>
                   </a>
                   <a href="https://www.instagram.com/joan.meikify/" target="_blank" rel="noopener noreferrer">
-                    <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded flex items-center justify-center">
+                    <div className="w-8 h-8 rounded flex items-center justify-center">
                       <img src="/images/instagram_logo.png" alt="Instagram" className="w-auto object-contain" />
                     </div>
                   </a>
@@ -1437,7 +1612,7 @@ export default function MeikifyWebsite() {
                     </div>
                   </a>
                   <a href="https://www.tiktok.com/@joan.meikify" target="_blank" rel="noopener noreferrer">
-                    <div className="w-8 h-8 bg-black rounded flex items-center justify-center">
+                    <div className="w-8 h-8 rounded flex items-center justify-center">
                       <img src="/images/tiktok_logo.avif" alt="TikTok" className="w-auto object-contain" />
                     </div>
                   </a>
