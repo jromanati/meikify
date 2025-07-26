@@ -115,6 +115,21 @@ const animationStyles = `
     }
   }
 
+  @keyframes fadeInOut {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    20%, 80% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+  }
+
   .animate-fade-in-left {
     animation: fadeInLeft 0.8s ease-out forwards;
   }
@@ -198,120 +213,37 @@ const animationStyles = `
   }
 `
 
-// Componente de notificación
+// Componente de notificación con el diseño exacto de la imagen
 const Notification = ({ type, title, message, onClose }) => {
-  const getConfig = () => {
-    switch (type) {
-      case "success":
-        return {
-          icon: <CheckCircle className="w-8 h-8" />,
-          bgGradient: "from-emerald-500 to-green-600",
-          bgLight: "from-emerald-50 to-green-50",
-          borderColor: "border-emerald-200",
-          iconBg: "bg-emerald-500",
-          textColor: "text-emerald-900",
-          subtextColor: "text-emerald-700",
-          emoji: "🎉",
-        }
-      case "error":
-        return {
-          icon: <XCircle className="w-8 h-8" />,
-          bgGradient: "from-red-500 to-rose-600",
-          bgLight: "from-red-50 to-rose-50",
-          borderColor: "border-red-200",
-          iconBg: "bg-red-500",
-          textColor: "text-red-900",
-          subtextColor: "text-red-700",
-          emoji: "⚠️",
-        }
-      case "warning":
-        return {
-          icon: <AlertCircle className="w-8 h-8" />,
-          bgGradient: "from-amber-500 to-yellow-600",
-          bgLight: "from-amber-50 to-yellow-50",
-          borderColor: "border-amber-200",
-          iconBg: "bg-amber-500",
-          textColor: "text-amber-900",
-          subtextColor: "text-amber-700",
-          emoji: "⚡",
-        }
-      default:
-        return {
-          icon: <CheckCircle className="w-8 h-8" />,
-          bgGradient: "from-blue-500 to-cyan-600",
-          bgLight: "from-blue-50 to-cyan-50",
-          borderColor: "border-blue-200",
-          iconBg: "bg-blue-500",
-          textColor: "text-blue-900",
-          subtextColor: "text-blue-700",
-          emoji: "ℹ️",
-        }
-    }
-  }
-
-  const config = getConfig()
-
   return (
-    <div className="fixed top-24 right-6 z-50 animate-slide-in-top max-w-md">
-      {/* Backdrop blur effect */}
-      <div className="absolute inset-0 bg-white/80 backdrop-blur-xl rounded-2xl"></div>
-
-      {/* Main notification container */}
-      <div
-        className={`relative bg-gradient-to-br ${config.bgLight} border-2 ${config.borderColor} rounded-2xl shadow-2xl overflow-hidden`}
-      >
-        {/* Top gradient bar */}
-        <div className={`h-1.5 bg-gradient-to-r ${config.bgGradient}`}></div>
-
-        {/* Content */}
-        <div className="p-6">
-          <div className="flex items-start space-x-4">
-            {/* Icon with animated background */}
-            <div className={`flex-shrink-0 ${config.iconBg} rounded-xl p-3 shadow-lg animate-pulse-gentle`}>
-              <div className="text-white">{config.icon}</div>
-            </div>
-
-            {/* Text content */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center space-x-2 mb-2">
-                <h3 className={`text-lg font-bold ${config.textColor}`}>
-                  {config.emoji} {title}
-                </h3>
-              </div>
-              <p className={`text-sm ${config.subtextColor} leading-relaxed`}>{message}</p>
-            </div>
-
-            {/* Close button */}
-            <button
-              onClick={onClose}
-              className={`flex-shrink-0 ${config.textColor} hover:bg-white/50 rounded-lg p-2 transition-all duration-200 hover:scale-110`}
-            >
-              <X className="w-5 h-5" />
-            </button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div className="bg-white rounded-2xl border-4 border-green-500 shadow-2xl max-w-md mx-4 animate-slide-in-top">
+        <div className="p-8 text-center">
+          {/* Emoji y título */}
+          <div className="mb-6">
+            <div className="text-4xl mb-3">🎉</div>
+            <h3 className="text-2xl font-bold text-green-600">¡Solicitud enviada!</h3>
           </div>
 
-          {/* Progress bar for auto-close */}
-          <div className="mt-4 h-1 bg-white/30 rounded-full overflow-hidden">
-            <div
-              className={`h-full bg-gradient-to-r ${config.bgGradient} rounded-full animate-[shrink_6s_linear_forwards]`}
-              style={{
-                animation: "shrink 6s linear forwards",
-              }}
-            ></div>
-          </div>
-        </div>
+          {/* Mensaje */}
+          <p className="text-gray-700 text-lg leading-relaxed mb-6">
+            Gracias por confiar en Meikify. Hemos recibido tu información y te enviaremos el diagnóstico automatizado
+            muy pronto.
+          </p>
 
-        {/* Decorative elements */}
-        <div className="absolute top-4 right-4 opacity-10">
-          <div className={`w-16 h-16 bg-gradient-to-br ${config.bgGradient} rounded-full blur-xl`}></div>
-        </div>
-        <div className="absolute bottom-4 left-4 opacity-5">
-          <div className={`w-12 h-12 bg-gradient-to-br ${config.bgGradient} rounded-full blur-lg`}></div>
+          {/* Botón de cerrar (opcional, se puede cerrar automáticamente) */}
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <X className="w-6 h-6" />
+          </button>
         </div>
       </div>
     </div>
   )
 }
+
 
 
 export default function MeikifyWebsite() {
@@ -324,6 +256,56 @@ export default function MeikifyWebsite() {
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
   const [notification, setNotification] = useState(null)
+  const [currentTextIndex, setCurrentTextIndex] = useState(0)
+
+  // Textos rotativos para el hero
+  const heroTexts = [
+    {
+      line1: "Automatiza.",
+      line2: "Optimiza.",
+      line3: "Escala.",
+    },
+    {
+      line1: "Automatiza.",
+      line2: "Acelera procesos.",
+      line3: "Escala tu impacto.",
+    },
+    {
+      line1: "Automatiza.",
+      line2: "Activa tu IA.",
+      line3: "Haz que crezca.",
+    },
+    {
+      line1: "Automatiza.",
+      line2: "Orquesta tu negocio.",
+      line3: "Conquista más clientes.",
+    },
+    {
+      line1: "Automatiza.",
+      line2: "Controla con datos.",
+      line3: "Toma mejores decisiones.",
+    },
+    {
+      line1: "Automatiza.",
+      line2: "Integra todo.",
+      line3: "Haz más con menos.",
+    },
+    {
+      line1: "Automatiza.",
+      line2: "Despierta eficiencia.",
+      line3: "Escala sin fricciones.",
+    },
+  ]
+
+  // Efecto para rotar textos automáticamente
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTextIndex((prev) => (prev + 1) % heroTexts.length)
+    }, 5000) // Cambia cada 4 segundos
+
+    return () => clearInterval(interval)
+  }, [])
+
 
   // Función para mostrar notificaciones
   const showNotification = (type, title, message) => {
@@ -482,17 +464,13 @@ export default function MeikifyWebsite() {
     const API_PASSWORD = "laCLAVEes123!"
     const basicAuth = "Basic " + Buffer.from(`${API_USERNAME}:${API_PASSWORD}`).toString("base64")
 
-    // showNotification(
-    //   "success",
-    //   "¡Formulario enviado exitosamente! 🎉",
-    //   "Recibirás tu diagnóstico personalizado con análisis y recomendaciones en tu correo o WhatsApp muy pronto. ¡Gracias por confiar en Meikify!",
-    // );(e.target as HTMLFormElement).reset()
+   /* showNotification("success", "¡Solicitud enviada!", "")
 
-    //     // Resetear reCAPTCHA
-    //     if (window.grecaptcha) {
-    //       window.grecaptcha.reset()
-    //     }
-    //     setRecaptchaToken(null)
+    // Resetear reCAPTCHA
+    if (window.grecaptcha) {
+      window.grecaptcha.reset()
+    }
+    setRecaptchaToken(null)*/
 
     try {
       const response = await fetch("https://n8nwebhook.meikify.cl/webhook/leads-diagnostico", {
@@ -503,13 +481,8 @@ export default function MeikifyWebsite() {
         },
         body: JSON.stringify(data),
       })
-      console.log(response)
       if (response.ok) {
-        showNotification(
-          "success",
-          "¡Formulario enviado exitosamente! 🎉",
-          "Recibirás tu diagnóstico personalizado con análisis y recomendaciones en tu correo o WhatsApp muy pronto. ¡Gracias por confiar en Meikify!",
-        )
+        showNotification("success", "¡Solicitud enviada!", "")
         ;(e.target as HTMLFormElement).reset()
 
         // Resetear reCAPTCHA
@@ -731,7 +704,7 @@ export default function MeikifyWebsite() {
                   style={{ background: "linear-gradient(to right, #00bce7, #0ea5e9)" }}
                   onClick={() => {
                     setIsMenuOpen(false)
-                    const element = document.querySelector("#contacto")
+                    const element = document.querySelector("#diagnostico")
                     if (element) {
                       const headerHeight = 80
                       const elementPosition = element.offsetTop - headerHeight
@@ -740,11 +713,12 @@ export default function MeikifyWebsite() {
                         behavior: "smooth",
                       })
                       // Track CTA click
-                      analytics.trackCTAClick("Diagnóstico Gratis", "mobile_menu")
+                      analytics.trackCTAClick(
+                        "Solicita tu diagnóstico gratis", "mobile_menu")
                     }
                   }}
                 >
-                  Diagnóstico Gratis
+                  Solicita tu diagnóstico gratis
                 </Button>
               </div>
             </nav>
@@ -759,25 +733,37 @@ export default function MeikifyWebsite() {
       >
         <div className="container mx-auto px-6">
           {/* Contenido centrado */}
-          <div className="text-center max-w-4xl mx-auto space-y-12">
+          <div className="text-center max-w-4xl mx-auto space-y-4">
             <div className="inline-flex items-center space-x-2 bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full text-sm font-medium">
               <Sparkles size={16} />
               <span>Revolución en automatización</span>
             </div>
-
-            <div className="space-y-8">
-              <h1 className="text-6xl lg:text-8xl font-black leading-none">
-                <span className="block text-slate-900">Automatiza.</span>
-                <span
-                  className="block text-transparent bg-clip-text"
-                  style={{ backgroundImage: "linear-gradient(to right, #00bce7, #0ea5e9)" }}
-                >
-                  Optimiza.
-                </span>
-                <span className="block text-yellow-500">Escala.</span>
-              </h1>
-
-              <div className="max-w-2xl mx-auto space-y-6">
+            <div className="space-y-2">
+             {/* Título con rotación automática */}
+              <div className="relative min-h-[280px] lg:min-h-[360px] flex items-center justify-center">
+                {heroTexts.map((text, index) => (
+                  <div
+                    key={index}
+                    className={`absolute inset-0 flex flex-col items-center justify-center transition-all w-full duration-1000 ${
+                      index === currentTextIndex
+                        ? "opacity-100 transform translate-y-0"
+                        : "opacity-0 transform translate-y-8"
+                    }`}
+                  >
+                    <h1 className="text-5xl lg:text-7xl font-black leading-none text-center">
+                      <span className="block text-slate-900 mb-3">{text.line1}</span>
+                      <span
+                        className="block text-transparent bg-clip-text mb-2"
+                        style={{ backgroundImage: "linear-gradient(to right, #00bce7, #0ea5e9)" }}
+                      >
+                        {text.line2}
+                      </span>
+                      <span className="block text-yellow-500">{text.line3}</span>
+                    </h1>
+                  </div>
+                ))}
+              </div>
+              <div className="max-w-2xl mx-auto space-y-6 mt-16">
                 <h2 className="text-3xl lg:text-4xl font-bold text-slate-800 leading-tight">
                   Haz que tu negocio trabaje por ti.
                 </h2>
@@ -786,6 +772,30 @@ export default function MeikifyWebsite() {
                   Con inteligencia artificial y automatización avanzada, liberamos a tu equipo de lo repetitivo para que
                   se concentre en lo que realmente importa: <strong>crecer, innovar y superar a la competencia</strong>.
                 </p>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center py-6">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-2 border-slate-300 text-slate-700 hover:bg-slate-50 px-8 py-4 rounded-full font-semibold transition-all duration-300 bg-transparent"
+                  onClick={() => {
+                      setIsMenuOpen(false)
+                      const element = document.querySelector("#diagnostico")
+                      if (element) {
+                        const headerHeight = 80
+                        const elementPosition = element.offsetTop - headerHeight
+                        window.scrollTo({
+                          top: elementPosition,
+                          behavior: "smooth",
+                        })
+                        // Track CTA click
+                        analytics.trackCTAClick("Diagnóstico Gratis", "mobile_menu")
+                      }
+                    }}
+                >
+                  Diagnóstico gratuito
+                  <ArrowRight className="ml-2" size={20} />
+                </Button>
               </div>
             </div>
           </div>
