@@ -1439,19 +1439,32 @@ export default function MeikifyWebsite() {
                     type="submit"
                     size="lg"
                     disabled={!recaptchaToken}
-                    className={`w-full px-8 py-4 text-lg font-bold rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] ${
-                      !recaptchaToken
+                    className={`
+                      w-full
+                      px-4 sm:px-8
+                      py-3 sm:py-4
+                      text-base sm:text-lg
+                      font-bold
+                      rounded-xl
+                      shadow-xl
+                      hover:shadow-2xl
+                      transition-all duration-300
+                      transform hover:scale-[1.02]
+                      flex items-center justify-center gap-2
+                      ${!recaptchaToken
                         ? "bg-gray-400 cursor-not-allowed"
                         : "bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
-                    } text-white`}
+                      }
+                      text-white
+                    `}
                     onClick={() => {
                       if (recaptchaToken) {
                         analytics.trackCTAClick("Generar diagnóstico con IA", "formulario")
                       }
                     }}
                   >
-                    <Sparkles className="mr-3" size={20} />
-                    Generar diagnóstico con IA
+                    <Sparkles className="w-5 h-5" />
+                    <span className="whitespace-nowrap">Generar diagnóstico con IA</span>
                   </Button>
                 </div>
 
