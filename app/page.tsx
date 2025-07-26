@@ -27,6 +27,13 @@ import {
 
 import { useAnalytics } from "@/hooks/use-analytics"
 import { ScrollTracker } from "@/components/scroll-tracker"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import {
+  faLinkedin,
+  faInstagram,
+  faYoutube,
+  faTiktok,
+} from "@fortawesome/free-brands-svg-icons"
 declare global {
   interface Window {
     grecaptcha: any
@@ -91,11 +98,11 @@ const animationStyles = `
   @keyframes slideInFromTop {
     from {
       opacity: 0;
-      transform: translateY(-100px);
+      transform: translateY(-50px) scale(0.95);
     }
     to {
       opacity: 1;
-      transform: translateY(0);
+      transform: translateY(0) scale(1);
     }
   }
 
@@ -193,59 +200,113 @@ const animationStyles = `
 
 // Componente de notificación
 const Notification = ({ type, title, message, onClose }) => {
-  const getIcon = () => {
+  const getConfig = () => {
     switch (type) {
       case "success":
-        return <CheckCircle className="w-6 h-6 text-green-500" />
+        return {
+          icon: <CheckCircle className="w-8 h-8" />,
+          bgGradient: "from-emerald-500 to-green-600",
+          bgLight: "from-emerald-50 to-green-50",
+          borderColor: "border-emerald-200",
+          iconBg: "bg-emerald-500",
+          textColor: "text-emerald-900",
+          subtextColor: "text-emerald-700",
+          emoji: "🎉",
+        }
       case "error":
-        return <XCircle className="w-6 h-6 text-red-500" />
+        return {
+          icon: <XCircle className="w-8 h-8" />,
+          bgGradient: "from-red-500 to-rose-600",
+          bgLight: "from-red-50 to-rose-50",
+          borderColor: "border-red-200",
+          iconBg: "bg-red-500",
+          textColor: "text-red-900",
+          subtextColor: "text-red-700",
+          emoji: "⚠️",
+        }
       case "warning":
-        return <AlertCircle className="w-6 h-6 text-yellow-500" />
+        return {
+          icon: <AlertCircle className="w-8 h-8" />,
+          bgGradient: "from-amber-500 to-yellow-600",
+          bgLight: "from-amber-50 to-yellow-50",
+          borderColor: "border-amber-200",
+          iconBg: "bg-amber-500",
+          textColor: "text-amber-900",
+          subtextColor: "text-amber-700",
+          emoji: "⚡",
+        }
       default:
-        return <CheckCircle className="w-6 h-6 text-blue-500" />
+        return {
+          icon: <CheckCircle className="w-8 h-8" />,
+          bgGradient: "from-blue-500 to-cyan-600",
+          bgLight: "from-blue-50 to-cyan-50",
+          borderColor: "border-blue-200",
+          iconBg: "bg-blue-500",
+          textColor: "text-blue-900",
+          subtextColor: "text-blue-700",
+          emoji: "ℹ️",
+        }
     }
   }
 
-  const getBgColor = () => {
-    switch (type) {
-      case "success":
-        return "bg-green-50 border-green-200"
-      case "error":
-        return "bg-red-50 border-red-200"
-      case "warning":
-        return "bg-yellow-50 border-yellow-200"
-      default:
-        return "bg-blue-50 border-blue-200"
-    }
-  }
-
-  const getTextColor = () => {
-    switch (type) {
-      case "success":
-        return "text-green-800"
-      case "error":
-        return "text-red-800"
-      case "warning":
-        return "text-yellow-800"
-      default:
-        return "text-blue-800"
-    }
-  }
+  const config = getConfig()
 
   return (
-    <div className="fixed top-4 right-4 z-50 animate-slide-in-top">
-      <div className={`max-w-md rounded-xl border-2 ${getBgColor()} shadow-2xl backdrop-blur-sm`}>
+    <div className="fixed top-24 right-6 z-50 animate-slide-in-top max-w-md">
+      {/* Backdrop blur effect */}
+      <div className="absolute inset-0 bg-white/80 backdrop-blur-xl rounded-2xl"></div>
+
+      {/* Main notification container */}
+      <div
+        className={`relative bg-gradient-to-br ${config.bgLight} border-2 ${config.borderColor} rounded-2xl shadow-2xl overflow-hidden`}
+      >
+        {/* Top gradient bar */}
+        <div className={`h-1.5 bg-gradient-to-r ${config.bgGradient}`}></div>
+
+        {/* Content */}
         <div className="p-6">
           <div className="flex items-start space-x-4">
-            <div className="flex-shrink-0 animate-pulse-gentle">{getIcon()}</div>
-            <div className="flex-1 min-w-0">
-              <h3 className={`text-lg font-bold ${getTextColor()} mb-2`}>{title}</h3>
-              <p className={`text-sm ${getTextColor()} leading-relaxed`}>{message}</p>
+            {/* Icon with animated background */}
+            <div className={`flex-shrink-0 ${config.iconBg} rounded-xl p-3 shadow-lg animate-pulse-gentle`}>
+              <div className="text-white">{config.icon}</div>
             </div>
-            <button onClick={onClose} className={`flex-shrink-0 ${getTextColor()} hover:opacity-70 transition-opacity`}>
+
+            {/* Text content */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center space-x-2 mb-2">
+                <h3 className={`text-lg font-bold ${config.textColor}`}>
+                  {config.emoji} {title}
+                </h3>
+              </div>
+              <p className={`text-sm ${config.subtextColor} leading-relaxed`}>{message}</p>
+            </div>
+
+            {/* Close button */}
+            <button
+              onClick={onClose}
+              className={`flex-shrink-0 ${config.textColor} hover:bg-white/50 rounded-lg p-2 transition-all duration-200 hover:scale-110`}
+            >
               <X className="w-5 h-5" />
             </button>
           </div>
+
+          {/* Progress bar for auto-close */}
+          <div className="mt-4 h-1 bg-white/30 rounded-full overflow-hidden">
+            <div
+              className={`h-full bg-gradient-to-r ${config.bgGradient} rounded-full animate-[shrink_6s_linear_forwards]`}
+              style={{
+                animation: "shrink 6s linear forwards",
+              }}
+            ></div>
+          </div>
+        </div>
+
+        {/* Decorative elements */}
+        <div className="absolute top-4 right-4 opacity-10">
+          <div className={`w-16 h-16 bg-gradient-to-br ${config.bgGradient} rounded-full blur-xl`}></div>
+        </div>
+        <div className="absolute bottom-4 left-4 opacity-5">
+          <div className={`w-12 h-12 bg-gradient-to-br ${config.bgGradient} rounded-full blur-lg`}></div>
         </div>
       </div>
     </div>
@@ -421,12 +482,18 @@ export default function MeikifyWebsite() {
     const API_PASSWORD = "laCLAVEes123!"
     const basicAuth = "Basic " + Buffer.from(`${API_USERNAME}:${API_PASSWORD}`).toString("base64")
 
-    showNotification(
-      "success",
-      "¡Formulario enviado exitosamente! 🎉",
-      "Recibirás tu diagnóstico personalizado con análisis y recomendaciones en tu correo o WhatsApp muy pronto. ¡Gracias por confiar en Meikify!",
-    )
-    
+    // showNotification(
+    //   "success",
+    //   "¡Formulario enviado exitosamente! 🎉",
+    //   "Recibirás tu diagnóstico personalizado con análisis y recomendaciones en tu correo o WhatsApp muy pronto. ¡Gracias por confiar en Meikify!",
+    // );(e.target as HTMLFormElement).reset()
+
+    //     // Resetear reCAPTCHA
+    //     if (window.grecaptcha) {
+    //       window.grecaptcha.reset()
+    //     }
+    //     setRecaptchaToken(null)
+
     try {
       const response = await fetch("https://n8nwebhook.meikify.cl/webhook/leads-diagnostico", {
         method: "POST",
@@ -826,7 +893,7 @@ export default function MeikifyWebsite() {
             {/* Central Timeline */}
             <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-[#00bce7] via-blue-500 to-yellow-400 hidden lg:block"></div>
 
-            <div className="space-y-24">
+            <div className="space-y-24 ">
               {[
                 {
                   phase: "01",
@@ -887,10 +954,10 @@ export default function MeikifyWebsite() {
                           </div>
                           <div>
                             <div className="text-sm font-bold text-slate-500">{step.phase}</div>
-                            <h3 className="text-2xl font-bold text-slate-900">{step.title}</h3>
+                            <h3 className="text-2xl font-bold text-slate-900  ">{step.title}</h3>
                           </div>
                         </div>
-                        <p className="text-slate-600 leading-relaxed text-lg">{step.description}</p>
+                        <p className="text-slate-600 leading-relaxed text-lg  text-center sm:text-left">{step.description}</p>
                       </CardContent>
                     </Card>
                   </div>
@@ -983,13 +1050,13 @@ export default function MeikifyWebsite() {
                     {useCase.industry}
                   </div>
                   <h3 className="text-xl font-bold text-slate-900 mb-4 text-center">{useCase.title}</h3>
-                  <p className="text-gray-600 mb-6 leading-relaxed text-sm">{useCase.description}</p>
+                  <p className="text-gray-600 mb-6 leading-relaxed text-sm  text-center sm:text-left">{useCase.description}</p>
 
                   <div className="space-y-2">
-                    <h4 className="font-semibold text-slate-900 text-sm">Métricas clave:</h4>
+                    <h4 className="font-semibold text-slate-900 text-sm  text-center sm:text-left">Métricas clave:</h4>
                     <ul className="space-y-1">
                       {useCase.metrics.map((metric, metricIndex) => (
-                        <li key={metricIndex} className="text-sm text-slate-600 flex items-start">
+                        <li key={metricIndex} className="text-sm text-slate-600 flex items-start  text-center sm:text-left">
                           <span className="text-green-500 mr-2">•</span>
                           <strong>{metric}</strong>
                         </li>
@@ -1175,21 +1242,12 @@ export default function MeikifyWebsite() {
 
                     {/* Contenedor de la imagen */}
                     <div className="relative bg-white rounded-3xl p-2 shadow-2xl">
-                      <div className="w-full h-96 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center">
-                        {/* Placeholder - reemplazar con la imagen real */}
-                        <div className="text-center text-gray-500">
-                          <div className="w-72 h-72 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full mx-auto mb-4 flex items-center justify-center">
-                            <img
-                              src="/images/joan_toro.jpeg"
-                              alt="Joan Toro"
-                              width={96}
-                              height={96}
-                              className="rounded-full object-cover h-full w-full shadow-lg"
-                            />
-                          </div>
-                          <p className="text-sm">Joan Toro</p>
-                          <p className="text-xs text-gray-400 mt-1">Fundador de Meikify</p>
-                        </div>
+                      <div className="w-full h-[500px] rounded-2xl overflow-hidden">
+                        <img
+                          src="/images/joan_toro.jpeg"
+                          alt="Joan Toro - Fundador de Meikify"
+                          className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-500"
+                        />
                       </div>
                     </div>
                   </div>
@@ -1198,23 +1256,16 @@ export default function MeikifyWebsite() {
             </div>
 
             {/* Contenido del fundador */}
-            <div className={`space-y-8 ${visibleSections.has("fundador") ? "animate-fade-in-right" : ""}`}>
+            <div className={`space-y-8 ${visibleSections.has("fundador") ? "animate-fade-in-right" : ""} text-center sm:text-left`}>
               <div className="space-y-6">
-                <div className="inline-flex items-center space-x-2 bg-cyan-100 text-cyan-800 px-4 py-2 rounded-full text-sm font-medium">
-                  <Star size={16} />
-                  <span>12+ años de experiencia</span>
-                </div>
-
                 <h3 className="text-3xl font-bold text-slate-900 leading-tight">La visión detrás de Meikify</h3>
 
                 <div className="space-y-4 text-lg text-slate-600 leading-relaxed">
                   <p className="text-xl font-semibold text-slate-800">Soy Joan Toro, fundador de Meikify.</p>
-
                   <p>
                     Llevo más de <strong>12 años ayudando a empresas</strong> a transformar su forma de trabajar,
                     combinando estrategia, tecnología y personas para obtener resultados concretos y sostenibles.
                   </p>
-
                   <p>
                     Mi propósito es claro: <strong className="text-cyan-600">hacer que las cosas pasen</strong> con
                     soluciones ágiles, humanas y eficaces.
@@ -1595,26 +1646,18 @@ export default function MeikifyWebsite() {
                 </div>
 
                 {/* Social Media Icons */}
-                <div className="flex space-x-4 pt-4">
+                <div className="flex space-x-4 pt-4 text-white">
                   <a href="https://www.linkedin.com/company/meikifycl/" target="_blank" rel="noopener noreferrer">
-                    <div className="w-8 h-8 rounded flex items-center justify-center">
-                      <img src="/images/linkedin_logo.png" alt="LinkedIn" className="w-auto object-contain" />
-                    </div>
+                    <FontAwesomeIcon icon={faLinkedin} className="text-cyan-300 hover:text-gray-400 text-2xl" />
                   </a>
                   <a href="https://www.instagram.com/joan.meikify/" target="_blank" rel="noopener noreferrer">
-                    <div className="w-8 h-8 rounded flex items-center justify-center">
-                      <img src="/images/instagram_logo.png" alt="Instagram" className="w-auto object-contain" />
-                    </div>
+                    <FontAwesomeIcon icon={faInstagram} className="text-cyan-300 hover:text-gray-400 text-2xl" />
                   </a>
                   <a href="https://www.youtube.com/@joan.meikify" target="_blank" rel="noopener noreferrer">
-                    <div className="w-8 h-8 bg-red-600 rounded flex items-center justify-center">
-                      <span className="text-white text-sm">▶</span>
-                    </div>
+                    <FontAwesomeIcon icon={faYoutube} className="text-cyan-300 hover:text-gray-400 text-2xl" />
                   </a>
                   <a href="https://www.tiktok.com/@joan.meikify" target="_blank" rel="noopener noreferrer">
-                    <div className="w-8 h-8 rounded flex items-center justify-center">
-                      <img src="/images/tiktok_logo.avif" alt="TikTok" className="w-auto object-contain" />
-                    </div>
+                    <FontAwesomeIcon icon={faTiktok} className="text-cyan-300 hover:text-gray-400 text-2xl" />
                   </a>
                 </div>
               </div>
