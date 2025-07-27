@@ -256,52 +256,15 @@ export default function MeikifyWebsite() {
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
   const [notification, setNotification] = useState(null)
-  const [currentTextIndex, setCurrentTextIndex] = useState(0)
+  const [currentWordIndex, setCurrentWordIndex] = useState(0)
+  // Palabras que cambian en el hero
+  const heroWords = ["crezca", "fluya", "escale", "respire", "evolucione"]
 
-  // Textos rotativos para el hero
-  const heroTexts = [
-    {
-      line1: "Automatiza.",
-      line2: "Optimiza.",
-      line3: "Escala.",
-    },
-    {
-      line1: "Automatiza.",
-      line2: "Acelera procesos.",
-      line3: "Escala tu impacto.",
-    },
-    {
-      line1: "Automatiza.",
-      line2: "Activa tu IA.",
-      line3: "Haz que crezca.",
-    },
-    {
-      line1: "Automatiza.",
-      line2: "Orquesta tu negocio.",
-      line3: "Conquista más clientes.",
-    },
-    {
-      line1: "Automatiza.",
-      line2: "Controla con datos.",
-      line3: "Toma mejores decisiones.",
-    },
-    {
-      line1: "Automatiza.",
-      line2: "Integra todo.",
-      line3: "Haz más con menos.",
-    },
-    {
-      line1: "Automatiza.",
-      line2: "Despierta eficiencia.",
-      line3: "Escala sin fricciones.",
-    },
-  ]
-
-  // Efecto para rotar textos automáticamente
+  // Efecto para rotar palabras automáticamente
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentTextIndex((prev) => (prev + 1) % heroTexts.length)
-    }, 5000) // Cambia cada 4 segundos
+      setCurrentWordIndex((prev) => (prev + 1) % heroWords.length)
+    }, 3000) // Cambia cada 3 segundos
 
     return () => clearInterval(interval)
   }, [])
@@ -738,39 +701,36 @@ export default function MeikifyWebsite() {
               <Sparkles size={16} />
               <span>Revolución en automatización</span>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-4">
              {/* Título con rotación automática */}
-              <div className="relative min-h-[280px] lg:min-h-[360px] flex items-center justify-center">
-                {heroTexts.map((text, index) => (
-                  <div
-                    key={index}
-                    className={`absolute inset-0 flex flex-col items-center justify-center transition-all w-full duration-1000 ${
-                      index === currentTextIndex
-                        ? "opacity-100 transform translate-y-0"
-                        : "opacity-0 transform translate-y-8"
-                    }`}
-                  >
-                    <h1 className="text-5xl lg:text-7xl font-black leading-none text-center">
-                      <span className="block text-slate-900 mb-3">{text.line1}</span>
-                      <span
-                        className="block text-transparent bg-clip-text mb-2"
-                        style={{ backgroundImage: "linear-gradient(to right, #00bce7, #0ea5e9)" }}
-                      >
-                        {text.line2}
-                      </span>
-                      <span className="block text-yellow-500">{text.line3}</span>
-                    </h1>
-                  </div>
-                ))}
+              <div className="relative min-h-[240px] lg:min-h-[300px] flex items-center justify-center">
+                <h1 className="text-5xl lg:text-7xl font-black leading-tight text-center">
+                  <span className="block text-slate-900 mb-4">
+                    Haz que tu negocio{" "}
+                    <div className="relative inline-block min-w-[280px] lg:min-w-[350px] align-top">
+                      {heroWords.map((word, index) => (
+                        <span
+                          key={index}
+                          className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 text-transparent bg-clip-text transition-all duration-1000 ${
+                            index === currentWordIndex ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                          }`}
+                          style={{ backgroundImage: "linear-gradient(to right, #00bce7, #0ea5e9)" }}
+                        >
+                          {word}
+                        </span>
+                      ))}
+                    </div>
+                  </span>
+                  <span className="block text-slate-900 mt-4">solo.</span>
+                </h1>
               </div>
               <div className="max-w-2xl mx-auto space-y-6 mt-16">
-                <h2 className="text-3xl lg:text-4xl font-bold text-slate-800 leading-tight">
-                  Haz que tu negocio trabaje por ti.
+                <h2 className="text-2xl lg:text-3xl font-bold text-slate-800 leading-tight">
+                  Con IA y automatización real, no promesas.
                 </h2>
-
                 <p className="text-xl text-slate-600 leading-relaxed">
-                  Con inteligencia artificial y automatización avanzada, liberamos a tu equipo de lo repetitivo para que
-                  se concentre en lo que realmente importa: <strong>crecer, innovar y superar a la competencia</strong>.
+                  Liberamos a tu equipo de lo repetitivo para que se concentre en lo que realmente importa:
+                  <strong> crecer, innovar y superar a la competencia</strong>.
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-4 justify-center py-6">
